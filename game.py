@@ -1,1 +1,1 @@
-print 'chupelo'
+print ('chupelo')
