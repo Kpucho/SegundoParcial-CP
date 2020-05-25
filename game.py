@@ -20,14 +20,58 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         pass
 
-"""                          WORLD                      """
+"""                                                 WORLD                                                       """
 def World():
     pass
 
+def draw_text(msj, font, color, surface, cord):
+    object = font.render(msj, True, color)
+    surface.blit(object, cord)
+
 
 if __name__ == '__main__':
-    pygame.init()
+
     ventana = pygame.display.set_mode([ANCHO,ALTO])
+
+    """                                             MENU                                                        """
+    pygame.font.init()
+    fuente = pygame.font.Font(None, 40)
+    fondo  = pygame.image.load('images/fondo.png')
+    fin = False
+    previo = False
+    click = False
+
+    while (not fin) and (not previo):
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                fin = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+
+        ventana.blit(fondo, [0,0])
+        mx, my = pygame.mouse.get_pos()
+        draw_text('Satanic Cars Alv', fuente, BLANCO, ventana, [250, 50])
+        boton1 = pygame.Rect(250, 150, 220, 50)
+
+        boton2 = pygame.Rect(250, 250, 220, 50)
+        if boton1.collidepoint((mx, my)):
+            if click:
+                previo = True
+        if boton2.collidepoint((mx, my)):
+            if click:
+                fin = True
+        pygame.draw.rect(ventana, LIGHT_PINK, boton1)
+        draw_text('Iniciar', fuente, BLANCO, ventana, [320, 160])
+        pygame.draw.rect(ventana, LIGHT_PINK, boton2)
+        draw_text('Salir', fuente, BLANCO, ventana, [320, 260])
+
+        click = False
+
+
+    """                                              JUEGO                                                       """
+
 
     Jugadores = pygame.sprite.Group()
 
@@ -35,8 +79,8 @@ if __name__ == '__main__':
     Jugadores.add(J)
 
     reloj = pygame.time.Clock()
-    fin = False
-    while not fin:
+    fin_juego = False
+    while not fin and (not fin_juego):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 fin = True

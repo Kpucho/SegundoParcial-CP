@@ -5,6 +5,8 @@ ALTO = 700
 #Colores
 VERDE = [0,255,0]
 NEGRO=[0,0,0]
+BLANCO = [255,255,255]
+LIGHT_PINK = [212, 159, 183]
 
 
 #Control
