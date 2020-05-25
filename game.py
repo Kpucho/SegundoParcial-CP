@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
 
     """                                              JUEGO                                                       """
-
+    musica.stop()
 
     Jugadores = pygame.sprite.Group()
 
