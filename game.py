@@ -35,13 +35,16 @@ if __name__ == '__main__':
 
     """                                             MENU                                                        """
     pygame.font.init()
+    pygame.mixer.init(44100, -16, 2, 2048)
     fuente = pygame.font.Font(None, 40)
     fondo  = pygame.image.load('images/fondo.png')
+    musica = pygame.mixer.Sound('sonidos/menu.wav')
     fin = False
     previo = False
     click = False
-
+    musica.play(-1)
     while (not fin) and (not previo):
+
         pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
