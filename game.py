@@ -2,10 +2,6 @@ import pygame
 import random
 from config import *
 
-Temp0 = 50
-Temp1 = 200
-Vias = [200,300,400]
-
 class Generador (pygame.sprite.Sprite):
     def __init__(self, posy):
         pygame.sprite.Sprite.__init__(self)

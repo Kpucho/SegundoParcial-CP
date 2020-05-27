@@ -13,4 +13,7 @@ LIGHT_PINK = [212, 159, 183]
 
 
 #Control
+Temp0 = 50
+Temp1 = 200
+Vias = [200,300,400]
 FPS = 40
