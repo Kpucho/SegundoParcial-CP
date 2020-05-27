@@ -58,8 +58,6 @@ class Player(pygame.sprite.Sprite):
 
 
 """                          WORLD                                        """
-def World():
-    pass
 
 def draw_text(msj, font, color, surface, cord):
     object = font.render(msj, True, color)
