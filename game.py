@@ -1,6 +1,41 @@
 import pygame
+import random
 from config import *
 
+Temp0 = 50
+Temp1 = 200
+Vias = [200,300,400]
+
+class Generador (pygame.sprite.Sprite):
+    def __init__(self, posy):
+        pygame.sprite.Sprite.__init__(self)
+        self.dir = 0 #direccion Abajo
+        self.image = pygame.Surface([100,100])
+        self.image.fill(BLANCO)
+        self.rect = self.image.get_rect()
+        self.rect.x = ANCHO
+        self.rect.y = posy
+        self.temp = random.randrange(Temp0,Temp1)
+
+    def update(self):
+        self.temp-=1
+
+    def getPosGenetation(self):
+        return (self.rect.y + 25)
+
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, posy):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface([50,50])
+        self.image.fill(LIGHT_PINK)
+        self.rect = self.image.get_rect()
+        self.rect.x = ALTO
+        self.rect.y = posy
+        self.velx = 0
+        self.vely = 0
+
+    def update(self):
+        self.rect.x += self.velx
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -118,6 +153,14 @@ if __name__ == '__main__':
     j = Player()
     Jugadores.add(j)
 
+    """Construcion de generadores"""
+    Generadores = pygame.sprite.Group()
+    Enemys = pygame.sprite.Group()
+    for v in Vias:
+        G = Generador(v)
+        Generadores.add(G)
+
+
     reloj = pygame.time.Clock()
     fin_juego = False
 
@@ -143,8 +186,23 @@ if __name__ == '__main__':
 
 
         #CONTROL
-        Jugadores.update()
+        """Activacion generadores"""
+        for g in Generadores:
+            if g.temp < 0:
+                #Direccion = random.randrange(500)
+                e = Enemy(g.getPosGenetation())
+                e.velx = -5
+                Enemys.add(e)
+                g.temp = random.randrange(Temp0,Temp1)
 
+        """Eliminacion de enemy fuera de pantalla"""
+        for e in Enemys:
+            if e.rect.right < 0:
+                Enemys.remove(e)
+
+        Jugadores.update()
+        Enemys.update()
+        Generadores.update()
         #Dibujado
         ventana.fill(NEGRO)
         pygame.draw.line(ventana, AMARILLO, [0, 100], [ANCHO, 100])
@@ -154,5 +212,7 @@ if __name__ == '__main__':
         pygame.draw.line(ventana, AMARILLO, [0, 500], [ANCHO, 500])
         pygame.draw.line(ventana, AMARILLO, [0, 600], [ANCHO, 600])
         Jugadores.draw(ventana)
+        Enemys.draw(ventana)
+        Generadores.draw(ventana)
         pygame.display.flip()
         reloj.tick(FPS)
