@@ -125,7 +125,7 @@ class Player(pygame.sprite.Sprite):
         self.vely = 0
         self.rapidez = 7
         self.vida = 3
-        # self.dir = 1
+        self.dir = 1
         # self.bloques = None
 
         #Modificadores
