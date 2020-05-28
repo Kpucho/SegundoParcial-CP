@@ -345,6 +345,9 @@ if __name__ == '__main__':
                 """Sonido perro de muerte"""
                 fin_juego = True
 
+        fondo_velx = - j.rapidez
+        fondo_posx += fondo_velx
+        
         Jugadores.update()
         Enemys.update(fondo_velx)
         Obstaculos.update(fondo_velx)
