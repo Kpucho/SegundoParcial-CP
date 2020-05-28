@@ -40,8 +40,8 @@ class Enemy(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([32,32])
-        self.image.fill(VERDE)
+        self.image = pygame.image.load('images/sprites/personaje2.png')
+        #self.image.blit('images/sprites/personaje.png')
         self.rect = self.image.get_rect()
         self.rect.x = 100
         self.rect.y = ALTO/2
