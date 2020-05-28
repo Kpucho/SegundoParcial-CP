@@ -58,8 +58,8 @@ class Obstaculo(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.original_image = pygame.image.load('images/sprites/cars2.png')
-        self.image = self.original_image.subsurface(0, 0, 110, 90)
+        self.original_image = pygame.image.load('images/sprites/cars3.png')
+        self.image = self.original_image.subsurface(0, 0, 110, 80)
         self.rect = self.image.get_rect()
         self.rect.x = 100
         self.rect.y = ALTO/2
@@ -67,6 +67,7 @@ class Player(pygame.sprite.Sprite):
         self.vely = 0
         self.rapidez = 7
         self.vida = 3
+        self.dir = 1
         # self.bloques = None
 
     def update_vel(self):
@@ -87,6 +88,13 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.y+=self.vely
 
+        """Direcciones: 1 horizontal, 2 hacia abajo, 3 hacia arriba """
+        if self.dir == 1:
+            j.image = j.original_image.subsurface(0, 0, 110, 80)
+        elif self.dir == 2:
+            j.image = j.original_image.subsurface(224, 0, 120, 80)
+        elif self.dir == 3:
+            j.image = j.original_image.subsurface(115, 0, 110, 80)
 
 
         #Franjas negras
@@ -205,22 +213,22 @@ if __name__ == '__main__':
                 if event.key == pygame.K_DOWN:
                     j.velx = 0
                     j.vely = j.rapidez
-                    j.image = j.original_image.subsurface(220, 25, 110, 90)
+                    j.dir = 2
 
                 if event.key == pygame.K_UP:
                     j.velx = 0
                     j.vely = - j.rapidez
-                    j.image = j.original_image.subsurface(115, 25, 110, 90)
+                    j.dir = 3
 
                 if event.key == pygame.K_RIGHT:
                     j.velx = j.rapidez
                     j.vely = 0
-                    j.image = j.original_image.subsurface(0, 0, 110, 90)
+                    j.dir = 1
 
                 if event.key == pygame.K_LEFT:
                     j.velx = - j.rapidez
                     j.vely = 0
-                    j.image = j.original_image.subsurface(0, 0, 110, 90)
+                    j.dir = 1
 
 
 
