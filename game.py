@@ -2,34 +2,49 @@ import pygame
 import random
 from config import *
 
-Temp0 = 50
-Temp1 = 200
-Vias = [200,300,400]
 
 class Generador (pygame.sprite.Sprite):
-    def __init__(self, posy):
+    def __init__(self, posy, T = "Enemys"):
         pygame.sprite.Sprite.__init__(self)
         self.dir = 0 #direccion Abajo
         self.image = pygame.Surface([100,100])
-        self.image.fill(BLANCO)
+        self.image.fill(NEGRO)
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
-        self.temp = random.randrange(Temp0,Temp1)
+        self.Type = T
+        if Type == "Enemys":
+            self.temp = random.randrange(Temp0,Temp1)
+        elif Type == "Obstaculos":
+            self.temp = random.randrange(2*Temp0,3*Temp1)
 
     def update(self):
         self.temp-=1
 
     def getPosGenetation(self):
-        return (self.rect.y + 25)
+        return (self.rect.y + TamVias/4)
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, posy):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface([50,50])
-        self.image.fill(LIGHT_PINK)
+        self.image.fill(ROJO)
         self.rect = self.image.get_rect()
-        self.rect.x = ALTO
+        self.rect.x = ANCHO
+        self.rect.y = posy
+        self.velx = 0
+        self.vely = 0
+
+    def update(self):
+        self.rect.x += self.velx
+
+class Obstaculo(pygame.sprite.Sprite):
+    def __init__(self, posy):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface([50,50])
+        self.image.fill(BLANCO)
+        self.rect = self.image.get_rect()
+        self.rect.x = ANCHO
         self.rect.y = posy
         self.velx = 0
         self.vely = 0
@@ -70,25 +85,23 @@ class Player(pygame.sprite.Sprite):
         self.rect.y+=self.vely
 
         #Franjas negras
-        if self.rect.bottom >= 600:
+        if self.rect.bottom >= Vias[5]:
             self.vely=0
-            self.rect.bottom = 600
-        if self.rect.top <= 100:
+            self.rect.bottom = Vias[5]
+        if self.rect.top <= Vias[0]:
             self.vely=0
-            self.rect.top = 100
+            self.rect.top = Vias[0]
 
         #Penalizacion por fango o arena
-        if self.rect.top <= 200 and self.rect.bottom >= 100:
+        if self.rect.top <= Vias[1] and self.rect.bottom >= Vias[0]:
             self.rapidez = 2
-        elif self.rect.top <= 600 and self.rect.bottom >= 500:
+        elif self.rect.top <= Vias[5] and self.rect.bottom >= Vias[4]:
             self.rapidez = 2
 
-        elif self.rect.top > 100 and self.rect.bottom < 600:
+        elif self.rect.top > Vias[0] and self.rect.bottom < Vias[5]:
             self.rapidez = 7
 
         self.update_vel()
-
-
 
 
 
@@ -97,9 +110,6 @@ class Player(pygame.sprite.Sprite):
 def draw_text(msj, font, color, surface, cord):
     object = font.render(msj, True, color)
     surface.blit(object, cord)
-
-
-
 
 if __name__ == '__main__':
 
@@ -148,22 +158,29 @@ if __name__ == '__main__':
     """//////////////                      JUEGO                            ///////////"""
     musica.stop()
 
+
     Jugadores = pygame.sprite.Group()
+    Generadores = pygame.sprite.Group()
+    Enemys = pygame.sprite.Group()
+    Obstaculos = pygame.sprite.Group()
 
     j = Player()
     Jugadores.add(j)
 
     """Construcion de generadores"""
-    Generadores = pygame.sprite.Group()
-    Enemys = pygame.sprite.Group()
-    for v in Vias:
-        G = Generador(v)
-        Generadores.add(G)
-
+    for i in range(6):
+        Aux = Vinicial+i*TamVias
+        Vias.append(Aux)
+        if i < 5:
+            if i in [1,2,3]:
+                Type = "Enemys"
+            else:
+                Type = "Obstaculos"
+            G = Generador(Aux, Type)
+            Generadores.add(G)
 
     reloj = pygame.time.Clock()
     fin_juego = False
-
 
     while not fin and (not fin_juego):
         for event in pygame.event.get():
@@ -183,36 +200,44 @@ if __name__ == '__main__':
                     j.velx = - j.rapidez
                     j.vely = 0
 
-
-
         #CONTROL
         """Activacion generadores"""
         for g in Generadores:
             if g.temp < 0:
-                #Direccion = random.randrange(500)
-                e = Enemy(g.getPosGenetation())
-                e.velx = -5
-                Enemys.add(e)
-                g.temp = random.randrange(Temp0,Temp1)
+                if g.Type == "Enemys":
+                    e = Enemy(g.getPosGenetation())
+                    e.velx = -5
+                    Enemys.add(e)
+                    g.temp = random.randrange(Temp0,Temp1)
+                if g.Type == "Obstaculos":
+                    o = Obstaculo(g.getPosGenetation())
+                    o.velx = -2 #Velocidad de desplazamiento del mundo // para remplazar
+                    Obstaculos.add(o)
+                    g.temp = random.randrange(2*Temp0,3*Temp1)
 
         """Eliminacion de enemy fuera de pantalla"""
         for e in Enemys:
             if e.rect.right < 0:
                 Enemys.remove(e)
 
+        for o in Obstaculos:
+            if o.rect.right < 0:
+                Obstaculos.remove(o)
+
         Jugadores.update()
         Enemys.update()
+        Obstaculos.update()
         Generadores.update()
         #Dibujado
         ventana.fill(NEGRO)
-        pygame.draw.line(ventana, AMARILLO, [0, 100], [ANCHO, 100])
-        pygame.draw.line(ventana, AMARILLO, [0, 200], [ANCHO, 200])
-        pygame.draw.line(ventana, AZUL, [0, 300], [ANCHO, 300])
-        pygame.draw.line(ventana, AZUL, [0, 400], [ANCHO, 400])
-        pygame.draw.line(ventana, AMARILLO, [0, 500], [ANCHO, 500])
-        pygame.draw.line(ventana, AMARILLO, [0, 600], [ANCHO, 600])
+
+        """Dibujado del mundo recorrible"""
+        for v in Vias:
+            pygame.draw.line(ventana, BLANCO, [0, v], [ANCHO, v])
+
         Jugadores.draw(ventana)
         Enemys.draw(ventana)
+        Obstaculos.draw(ventana)
         Generadores.draw(ventana)
         pygame.display.flip()
         reloj.tick(FPS)
