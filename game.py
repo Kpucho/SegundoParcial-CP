@@ -155,6 +155,7 @@ class Player(pygame.sprite.Sprite):
 
         if self.velx >= 0:
             self.puntaje += multiplicador*((self.rapidez/4) + pun_inmunidad)
+        print 'puntaje', self.puntaje
 
 
 
@@ -185,6 +186,7 @@ class Player(pygame.sprite.Sprite):
             valor_camino = 5
 
         j.rapidez = valor_camino + valor_lentitud + valor_vivacidad
+
 
     def update_vel(self):
 
