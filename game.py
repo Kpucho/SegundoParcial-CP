@@ -48,10 +48,20 @@ class Enemy(pygame.sprite.Sprite):
         self.via = posy
         self.temp_giro = random.randrange(Temp0,Temp1) #asegurar que sea cada segundo
 
+    def corregir_via(self):
+        #No salirse de su carril
+        if self.rect.top <= self.via:
+            self.estado = 0
+            self.vely = 0
+            self.rect.top = self.via
+        elif self.rect.bottom >= self.via + 128:
+            self.estado = 0
+            self.vely = 0
+            self.rect.bottom = self.via + 128
 
     def update_giro(self):
 
-        if self.tipo == 1:
+        if self.tipo == 1 and self.life:
             if self.temp_giro < 0:
                 #Verifica a donde ir
                 if self.rect.top <= self.via:
@@ -62,17 +72,11 @@ class Enemy(pygame.sprite.Sprite):
                     self.vely = - self.rapidez
                 self.temp_giro = random.randrange(Temp0,Temp1)
             elif self.vely != 0 and self.estado != 0:
-                #No salirse de su carril
-                if self.rect.top <= self.via:
-                    self.estado = 0
-                    self.vely = 0
-                    self.rect.top = self.via
-                elif self.rect.bottom >= self.via + 128:
-                    self.estado = 0
-                    self.vely = 0
-                    self.rect.bottom = self.via + 128
+                self.corregir_via()
             else:
                 self.temp_giro -= 1
+        elif self.tipo == 1 and not self.life:
+            self.corregir_via()
 
     def Dead(self):
         self.life = False
