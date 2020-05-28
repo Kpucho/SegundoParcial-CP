@@ -151,12 +151,17 @@ class Player(pygame.sprite.Sprite):
 
         #modificadores de movimiento
         self.lentitud = False
+        self.temp_lentitud = 0
+
         self.vivacidad = False #Aumento de velocidad con respecto a la base
+        self.temp_vivacidad = 0
+
         self.impacto = False
         self.temp_impacto = 0
 
         # multiplicador de puntaje
         self.por_dos = False
+        self.temp_por_dos = 0
 
         self.puntaje = 0
 
@@ -252,10 +257,26 @@ class Player(pygame.sprite.Sprite):
         elif self.inmunidad and self.temp_inmunidad <= 0:
             self.inmunidad = False
 
+        if self.lentitud and self.temp_lentitud > 0:
+            self.temp_lentitud -= 1
+        elif self.lentitud and self.temp_lentitud <= 0:
+            self.lentitud = False
+
+        if self.vivacidad and self.temp_vivacidad > 0:
+            self.temp_vivacidad -= 1
+        elif self.vivacidad and self.temp_vivacidad <= 0:
+            self.vivacidad = False
+
         if self.impacto and self.temp_impacto > 0:
             self.temp_impacto -= 1
-        elif self.inmunidad and self.temp_inmunidad <= 0:
+        elif self.impacto and self.temp_impacto <= 0:
             self.impacto = False
+
+        if self.por_dos and self.temp_por_dos > 0:
+            self.temp_por_dos -= 1
+        elif self.por_dos and self.temp_por_dos <= 0:
+            self.por_dos = False
+
 
         #Animacion
         if self.inmunidad:
@@ -269,7 +290,7 @@ class Player(pygame.sprite.Sprite):
 
     def impacto_jugador(self):
         self.impacto = True
-        self.temp_impacto = 3
+        self.temp_impacto = 25
 
     def quitar_vida(self):
         if not self.inmunidad:
