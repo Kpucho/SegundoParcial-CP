@@ -19,3 +19,13 @@ TamVias = 128
 Vinicial = 32
 Vias = []
 FPS = 40
+
+import random
+
+#pExito = probabilidad de conseguir cierto objetivo
+def prob2(pExito):
+    prob = random.randrange(100)
+    if prob < pExito:
+        return 1
+    else:
+        return 0
