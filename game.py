@@ -301,9 +301,9 @@ if __name__ == '__main__':
                 Enemys.add(e)
                 g.temp = random.randrange(Temp0,Temp1)
 
-                    o.velx = fondo_velx #Velocidad de desplazamiento del mundo // para remplazar
-                    Obstaculos.add(o)
-                    g.temp = random.randrange(2*Temp0,3*Temp1)
+                o.velx = fondo_velx #Velocidad de desplazamiento del mundo // para remplazar
+                Obstaculos.add(o)
+                g.temp = random.randrange(2*Temp0,3*Temp1)
 
         """Eliminacion de enemy fuera de pantalla"""
         for e in Enemys:
