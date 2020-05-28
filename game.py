@@ -43,8 +43,8 @@ class Enemy(pygame.sprite.Sprite):
 class Obstaculo(pygame.sprite.Sprite):
     def __init__(self, posy):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([50,50])
-        self.image.fill(BLANCO)
+        self.image = pygame.image.load('images/sprites/obstaculos.png')
+        self.image = self.image.subsurface(0, 530, 80, 115)
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
@@ -58,8 +58,8 @@ class Obstaculo(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([32,32])
-        self.image.fill(VERDE)
+        self.image = pygame.image.load('images/sprites/cars.png')
+        self.image = self.image.subsurface(0, 0, 110, 50)
         self.rect = self.image.get_rect()
         self.rect.x = 100
         self.rect.y = ALTO/2
@@ -192,6 +192,9 @@ if __name__ == '__main__':
     reloj = pygame.time.Clock()
     fin_juego = False
 
+
+
+    """Eventos"""
     while not fin and (not fin_juego):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -209,6 +212,8 @@ if __name__ == '__main__':
                 if event.key == pygame.K_LEFT:
                     j.velx = - j.rapidez
                     j.vely = 0
+
+
 
         #CONTROL
         """Activacion generadores"""
