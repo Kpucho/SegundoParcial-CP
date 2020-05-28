@@ -26,11 +26,11 @@ class Generador (pygame.sprite.Sprite):
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, posy):
+        self.islife = True
         pygame.sprite.Sprite.__init__(self)
-        #self.image = pygame.image.load('images/sprites/cars3.png')
-        #self.image = self.image.subsurface(0, 310, 140, 50)
-        self.image = pygame.Surface([100,100])
-        self.image.fill(NEGRO)
+        self.image = pygame.Surface([50,50])
+        if self.islife == True :
+            self.image.fill(ROJO)
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
@@ -42,11 +42,23 @@ class Enemy(pygame.sprite.Sprite):
         self.velx = - self.rapidez + fondo_velx
         self.rect.x += self.velx
 
+    def Dead(self):
+        self.islife = False
+        self.image.fill(LIGHT_PINK)
+
 class Obstaculo(pygame.sprite.Sprite):
-    def __init__(self, posy):
+    def __init__(self, posy, Mamada):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('images/sprites/obstaculos.png')
-        self.image = self.image.subsurface(0, 530, 80, 115)
+        self.islife = True
+        self.isMamado = Mamada
+        self.image = pygame.Surface([50,50])
+        if (self.isMamado == True):
+            if self.islife == True:
+                self.image.fill(ROJO)
+        else:
+            if self.islife  == True:
+                self.image.fill(BLANCO)
+
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
@@ -56,6 +68,15 @@ class Obstaculo(pygame.sprite.Sprite):
     def update(self, fondo_velx):
         self.velx = fondo_velx
         self.rect.x += self.velx
+
+    def Dead(self):
+        self.islife = False
+        if (self.isMamado == True):
+            if self.islife == False:
+                self.image.fill(LIGHT_PINK)
+        else:
+            if self.islife == False:
+                self.image.fill(VERDE)
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -69,21 +90,30 @@ class Player(pygame.sprite.Sprite):
         self.vely = 0
         self.rapidez = 7
         self.vida = 3
+
         self.dir = 1
+
+        self.temp = 0
+        self.impacto = False
+
         # self.bloques = None
 
     def update_vel(self):
+        if not self.impacto:
+            if j.vely > 0:
+                j.vely = j.rapidez
+            elif j.vely < 0:
+                j.vely = - j.rapidez
 
-        if j.vely > 0:
-            j.vely = j.rapidez
-        elif j.vely < 0:
-            j.vely = - j.rapidez
-
-        if j.velx > 0:
-            j.velx = j.rapidez
-        elif j.velx < 0:
-            j.velx = - j.rapidez
-
+            if j.velx > 0:
+                j.velx = j.rapidez
+            elif j.velx < 0:
+                j.velx = - j.rapidez
+        else:
+            if self.temp == 0:
+                self.impacto = False
+            else:
+                self.temp -= 1
 
     def update(self):
         self.rect.x += self.velx
@@ -98,6 +128,14 @@ class Player(pygame.sprite.Sprite):
         elif self.dir == 3:
             j.image = j.original_image.subsurface(115, 0, 110, 80)
 
+        #Limites de la pantalla
+        if self.rect.left <= 0:
+            self.velx = 0
+            self.rect.left = 0
+
+        if self.rect.right >= ANCHO:
+            self.velx = 0
+            self.rect.right = ANCHO
 
         #Franjas negras
         if self.rect.bottom >= Vias[5]:
@@ -118,6 +156,10 @@ class Player(pygame.sprite.Sprite):
 
         self.update_vel()
 
+    def reducevel(self):
+        self.Temp = 10
+        self.impacto = True
+        self.rapidez = 1
 
 
 """                          WORLD                                        """
@@ -244,22 +286,64 @@ if __name__ == '__main__':
                     Enemys.add(e)
                     g.temp = random.randrange(Temp0,Temp1)
                 if g.Type == "Obstaculos":
-                    o = Obstaculo(g.getPosGenetation())
-                    o.velx = fondo_velx #Velocidad de desplazamiento del mundo // para remplazar
+                    if (random.randrange(101) <= 50):
+                        Mamada = True
+                    else:
+                        Mamada = False
+                    o = Obstaculo(g.getPosGenetation(),Mamada)
+
+                    o.velx = -2 #Velocidad de desplazamiento del mundo // para remplazar
                     Obstaculos.add(o)
                     g.temp = random.randrange(2*Temp0,3*Temp1)
 
-        """Eliminacion de enemy fuera de pantalla"""
+        """Eliminacion de enemy fuera de pantalla y Colisionessss"""
         for e in Enemys:
+            Ls_Enemys = pygame.sprite.spritecollide(e,Jugadores,False)
+            impacto = False
+
             if e.rect.right < 0:
                 Enemys.remove(e)
 
+            for j in Ls_Enemys:
+                if e.islife == True:
+                    if not impacto:
+                        e.Dead()
+                        j.reducevel()
+                        print j.vida
+                        j.vida-=1
+                        """Sonido de golpe perro"""
+                        """Actualizar INFO de jugador"""
+                        impacto = True
+
         for o in Obstaculos:
+            Ls_Obs = pygame.sprite.spritecollide(o,Jugadores,False)
+            impacto = False
+
             if o.rect.right < 0:
                 Obstaculos.remove(o)
 
-        fondo_velx = - j.rapidez
-        fondo_posx += fondo_velx
+            for j in Ls_Obs:
+                if o.islife == True:
+                    if o.isMamado == True:
+                        if not impacto:
+                            o.Dead()
+                            j.reducevel()
+                            print j.vida
+                            j.vida-=1
+                            """Sonido de golpe perro"""
+                            """Actualizar INFO de jugador"""
+                            impacto = True
+
+                    if o.isMamado == False:
+                        if not impacto:
+                            o.Dead()
+                            j.reducevel()
+                            impacto = True
+
+        for j in Jugadores:
+            if j.vida < 0:
+                """Sonido perro de muerte"""
+                fin_juego = True
 
         Jugadores.update()
         Enemys.update(fondo_velx)
