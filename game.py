@@ -44,6 +44,7 @@ class Enemy(pygame.sprite.Sprite):
         self.velx = 0
         self.vely = 0
         self.estado = 0 # animacion 0 izq  1: abajo 2: arriba
+        self.life = True
         self.via = posy
         self.temp_giro = random.randrange(Temp0,Temp1) #asegurar que sea cada segundo
 
@@ -73,6 +74,9 @@ class Enemy(pygame.sprite.Sprite):
             else:
                 self.temp_giro -= 1
 
+    def Dead(self):
+        self.life = False
+        self.image.fill(LIGHT_PINK)
 
 
     def update(self, fondo_velx):
@@ -87,6 +91,9 @@ class Obstaculo(pygame.sprite.Sprite):
     def __init__(self, posy, tipo):
         pygame.sprite.Sprite.__init__(self)
 
+        self.life = True
+        #tipo 0 es arbol
+        #tipo 1 es arbusto
         self.tipo = tipo
         self.color = [BLANCO, VERDE]
 
@@ -100,6 +107,13 @@ class Obstaculo(pygame.sprite.Sprite):
         self.rect.y = posy
         self.velx = 0
         self.vely = 0
+
+    def Dead(self):
+        self.life = False
+        if self.tipo == 0: #Arbol
+            self.image.fill(LIGHT_PINK)
+        else: #arbusto
+            self.image.fill(NEGRO)
 
     def update(self, fondo_velx):
         self.velx = fondo_velx
@@ -129,11 +143,13 @@ class Player(pygame.sprite.Sprite):
         #incremento de vida
         #inmunidadad
         self.inmunidad = False
-        self.temp_inmunidad = 2 * FPS
+        self.temp_inmunidad = 0
 
         #modificadores de movimiento
         self.lentitud = False
         self.vivacidad = False #Aumento de velocidad con respecto a la base
+        self.impacto = False
+        self.temp_impacto = 0
 
         # multiplicador de puntaje
         self.por_dos = False
@@ -144,9 +160,9 @@ class Player(pygame.sprite.Sprite):
 
     def update_puntaje (self):
         if self.inmunidad:
-            pun_inmunidad = 2
-        else:
             pun_inmunidad = 0
+        else:
+            pun_inmunidad = 2
 
         if self.por_dos:
             multiplicador = 2
@@ -155,38 +171,36 @@ class Player(pygame.sprite.Sprite):
 
         if self.velx >= 0:
             self.puntaje += multiplicador*((self.rapidez/4) + pun_inmunidad)
-        print 'puntaje', self.puntaje
-
 
 
     def update_rapidez(self):
 
         #el aumento de vida y la inmunidad se realiza en colision
         # El modificador de multiplicador de puntaje en la funcion puntaje del juegador
+        if not self.impacto:
+            # En la colision si se coloca uno verdadero, el otro tiene que ser falso
+            # modificadores de velocidad
+            if self.lentitud:
+                valor_lentitud = - 2
+            else:
+                valor_lentitud = 0
 
+            if self.vivacidad:
+                valor_vivacidad = 2
+            else:
+                valor_vivacidad = 0
 
-        # En la colision si se coloca uno verdadero, el otro tiene que ser falso
-        # modificadores de velocidad
-        if self.lentitud:
-            valor_lentitud = - 2
+            #Penalizacion por fango o arena
+            if self.rect.top <= Vias[1] and self.rect.bottom >= Vias[0]:
+                valor_camino = 3
+            elif self.rect.top <= Vias[5] and self.rect.bottom >= Vias[4]:
+                valor_camino = 3
+            elif self.rect.top > Vias[0] and self.rect.bottom < Vias[5]:
+                valor_camino = 7
+
+            j.rapidez = valor_camino + valor_lentitud + valor_vivacidad
         else:
-            valor_lentitud = 0
-
-        if self.vivacidad:
-            valor_vivacidad = 2
-        else:
-            valor_vivacidad = 0
-
-        #Penalizacion por fango o arena
-        if self.rect.top <= Vias[1] and self.rect.bottom >= Vias[0]:
-            valor_camino = 3
-        elif self.rect.top <= Vias[5] and self.rect.bottom >= Vias[4]:
-            valor_camino = 3
-        elif self.rect.top > Vias[0] and self.rect.bottom < Vias[5]:
-            valor_camino = 5
-
-        j.rapidez = valor_camino + valor_lentitud + valor_vivacidad
-
+            j.rapidez = 2
 
     def update_vel(self):
 
@@ -203,7 +217,6 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.velx
-
         self.rect.y+=self.vely
 
         # """Direcciones: 1 horizontal, 2 hacia abajo, 3 hacia arriba """
@@ -229,11 +242,36 @@ class Player(pygame.sprite.Sprite):
         if self.rect.right > 650:
             self.rect.right = 650
 
+        #Manejo de temporizadores
+        if self.inmunidad and self.temp_inmunidad > 0:
+            self.temp_inmunidad -= 1
+        elif self.inmunidad and self.temp_inmunidad <= 0:
+            self.inmunidad = False
+
+        if self.impacto and self.temp_impacto > 0:
+            self.temp_impacto -= 1
+        elif self.inmunidad and self.temp_inmunidad <= 0:
+            self.impacto = False
+
+        #Animacion
+        if self.inmunidad:
+            self.image.fill(AMARILLO)
+        else:
+            self.image.fill(VERDE)
+
         self.update_rapidez()
         self.update_puntaje()
         self.update_vel()
 
+    def impacto_jugador(self):
+        self.impacto = True
+        self.temp_impacto = 3
 
+    def quitar_vida(self):
+        if not self.inmunidad:
+            self.vida -= 1
+            self.inmunidad = True
+            self.temp_inmunidad = 4 * FPS
 
 """                          WORLD                                        """
 
@@ -360,19 +398,58 @@ if __name__ == '__main__':
                     g.temp = random.randrange(Temp0,Temp1)
                 if g.Type == "Obstaculos":
                     #Probabilidad 60 que salgan arbustos
+                    # tipo 1 arbusto tipo 0 arbol
                     o = Obstaculo(g.getPosGenetation(), prob2(60))
                     o.velx = fondo_velx
                     Obstaculos.add(o)
                     g.temp = random.randrange(2*Temp0,3*Temp1)
 
-        """Eliminacion de enemy fuera de pantalla"""
+        """Eliminacion de enemy fuera de pantalla y Colisionessss"""
         for e in Enemys:
+            Ls_Enemys = pygame.sprite.spritecollide(e,Jugadores,False)
+            #Verificar importancia de variable impacto
+            impacto = False
+
             if e.rect.right < 0:
                 Enemys.remove(e)
 
+            for j in Ls_Enemys:
+                if e.life == True and not impacto:
+                    e.Dead()
+                    j.impacto_jugador()
+                    j.quitar_vida()
+
+                    """Sonido de golpe perro"""
+                    """Actualizar INFO de jugador"""
+                    impacto = True
+
+
         for o in Obstaculos:
+            Ls_Obs = pygame.sprite.spritecollide(o,Jugadores,False)
+            impacto = False
+
             if o.rect.right < 0:
                 Obstaculos.remove(o)
+
+            for j in Ls_Obs:
+                if o.life == True and not impacto:
+                    #Arbol
+                    if o.tipo == 0:
+                        o.Dead()
+                        j.impacto_jugador()
+                        j.quitar_vida()
+
+                        """Sonido de golpe perro"""
+                        """Actualizar INFO de jugador"""
+                    else: # Arbusto
+                        o.Dead()
+                        j.impacto_jugador()
+                    impacto = True
+
+        for j in Jugadores:
+            if j.vida < 0:
+                """Sonido perro de muerte"""
+                fin_juego = True
 
         fondo_velx = - j.rapidez
         fondo_posx += fondo_velx
