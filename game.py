@@ -27,8 +27,8 @@ class Generador (pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, posy):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([50,50])
-        self.image.fill(ROJO)
+        self.image = pygame.image.load('images/sprites/cars.png')
+        self.image = self.image.subsurface(0, 310, 140, 50)
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
@@ -58,8 +58,8 @@ class Obstaculo(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('images/sprites/cars.png')
-        self.image = self.image.subsurface(0, 0, 110, 50)
+        self.original_image = pygame.image.load('images/sprites/cars2.png')
+        self.image = self.original_image.subsurface(0, 0, 110, 90)
         self.rect = self.image.get_rect()
         self.rect.x = 100
         self.rect.y = ALTO/2
@@ -86,6 +86,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += self.velx
 
         self.rect.y+=self.vely
+
+
 
         #Franjas negras
         if self.rect.bottom >= Vias[5]:
@@ -193,7 +195,7 @@ if __name__ == '__main__':
     fin_juego = False
 
 
-
+    ang = 15
     """Eventos"""
     while not fin and (not fin_juego):
         for event in pygame.event.get():
@@ -203,15 +205,22 @@ if __name__ == '__main__':
                 if event.key == pygame.K_DOWN:
                     j.velx = 0
                     j.vely = j.rapidez
+                    j.image = j.original_image.subsurface(220, 25, 110, 90)
+
                 if event.key == pygame.K_UP:
                     j.velx = 0
                     j.vely = - j.rapidez
+                    j.image = j.original_image.subsurface(115, 25, 110, 90)
+
                 if event.key == pygame.K_RIGHT:
                     j.velx = j.rapidez
                     j.vely = 0
+                    j.image = j.original_image.subsurface(0, 0, 110, 90)
+
                 if event.key == pygame.K_LEFT:
                     j.velx = - j.rapidez
                     j.vely = 0
+                    j.image = j.original_image.subsurface(0, 0, 110, 90)
 
 
 
