@@ -1,9 +1,9 @@
 import pygame
-import random
 from config import *
 
 
 class Generador (pygame.sprite.Sprite):
+
     def __init__(self, posy, T = "Enemys"):
         pygame.sprite.Sprite.__init__(self)
         self.dir = 0 #direccion Abajo
@@ -22,29 +22,76 @@ class Generador (pygame.sprite.Sprite):
         self.temp-=1
 
     def getPosGenetation(self):
-        return (self.rect.y + TamVias/4)
+        return self.rect.y
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, posy):
+
+    def __init__(self, posy, tipo):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('images/sprites/cars.png')
-        self.image = self.image.subsurface(0, 310, 140, 50)
+
+        self.tipo = tipo
+        self.color = [AZUL, ROJO]
+        self.image = pygame.Surface([64,64])
+        self.image.fill(self.color[self.tipo])
+
+        # self.image = pygame.image.load('images/sprites/cars.png')
+        # self.image = self.image.subsurface(0, 310, 140, 50)
+
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
-        self.rapidez = 5
+        self.rapidez = 3
         self.velx = 0
         self.vely = 0
+        self.estado = 0 # animacion 0 izq  1: abajo 2: arriba
+        self.via = posy
+        self.temp_giro = random.randrange(Temp0,Temp1) #asegurar que sea cada segundo
+
+
+    def update_giro(self):
+
+        if self.tipo == 1:
+            if self.temp_giro < 0:
+                #Verifica a donde ir
+                if self.rect.top <= self.via:
+                    self.estado = 1
+                    self.vely = self.rapidez
+                elif self.rect.bottom >= self.via + 128:
+                    self.estado = 2
+                    self.vely = - self.rapidez
+                self.temp_giro = random.randrange(Temp0,Temp1)
+            elif self.vely != 0 and self.estado != 0:
+                #No salirse de su carril
+                if self.rect.top <= self.via:
+                    self.estado = 0
+                    self.vely = 0
+                    self.rect.top = self.via
+                elif self.rect.bottom >= self.via + 128:
+                    self.estado = 0
+                    self.vely = 0
+                    self.rect.bottom = self.via + 128
+            else:
+                self.temp_giro -= 1
+
+
 
     def update(self, fondo_velx):
         self.velx = - self.rapidez + fondo_velx
         self.rect.x += self.velx
+        self.rect.y += self.vely
+
+        self.update_giro()
 
 class Obstaculo(pygame.sprite.Sprite):
+
     def __init__(self, posy):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('images/sprites/obstaculos.png')
-        self.image = self.image.subsurface(0, 530, 80, 115)
+
+        self.image = pygame.Surface([64,64])
+        self.image.fill(BLANCO)
+
+        # self.image = pygame.image.load('images/sprites/obstaculos.png')
+        # self.image = self.image.subsurface(0, 530, 80, 115)
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
@@ -56,10 +103,13 @@ class Obstaculo(pygame.sprite.Sprite):
         self.rect.x += self.velx
 
 class Player(pygame.sprite.Sprite):
+
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.original_image = pygame.image.load('images/sprites/cars3.png')
-        self.image = self.original_image.subsurface(0, 0, 110, 80)
+        self.image = pygame.Surface([32,32])
+        self.image.fill(VERDE)
+        # self.original_image = pygame.image.load('images/sprites/cars3.png')
+        # self.image = self.original_image.subsurface(0, 0, 110, 80)
         self.rect = self.image.get_rect()
         self.rect.x = 100
         self.rect.y = ALTO/2
@@ -67,8 +117,19 @@ class Player(pygame.sprite.Sprite):
         self.vely = 0
         self.rapidez = 7
         self.vida = 3
-        self.dir = 1
+        # self.dir = 1
         # self.bloques = None
+
+
+    def update_rapidez(self):
+
+        #Penalizacion por fango o arena
+        if self.rect.top <= Vias[1] and self.rect.bottom >= Vias[0]:
+            self.rapidez = 4
+        elif self.rect.top <= Vias[5] and self.rect.bottom >= Vias[4]:
+            self.rapidez = 4
+        elif self.rect.top > Vias[0] and self.rect.bottom < Vias[5]:
+            self.rapidez = 7
 
     def update_vel(self):
 
@@ -88,13 +149,13 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.y+=self.vely
 
-        """Direcciones: 1 horizontal, 2 hacia abajo, 3 hacia arriba """
-        if self.dir == 1:
-            j.image = j.original_image.subsurface(0, 0, 110, 80)
-        elif self.dir == 2:
-            j.image = j.original_image.subsurface(224, 0, 120, 80)
-        elif self.dir == 3:
-            j.image = j.original_image.subsurface(115, 0, 110, 80)
+        # """Direcciones: 1 horizontal, 2 hacia abajo, 3 hacia arriba """
+        # if self.dir == 1:
+        #     j.image = j.original_image.subsurface(0, 0, 110, 80)
+        # elif self.dir == 2:
+        #     j.image = j.original_image.subsurface(224, 0, 120, 80)
+        # elif self.dir == 3:
+        #     j.image = j.original_image.subsurface(115, 0, 110, 80)
 
 
         #Franjas negras
@@ -105,15 +166,13 @@ class Player(pygame.sprite.Sprite):
             self.vely=0
             self.rect.top = Vias[0]
 
-        #Penalizacion por fango o arena
-        if self.rect.top <= Vias[1] and self.rect.bottom >= Vias[0]:
-            self.rapidez = 2
-        elif self.rect.top <= Vias[5] and self.rect.bottom >= Vias[4]:
-            self.rapidez = 2
+        # limites del jugador en pantalla
+        if self.rect.left < 30:
+            self.rect.left = 30
+        if self.rect.right > 650:
+            self.rect.right = 650
 
-        elif self.rect.top > Vias[0] and self.rect.bottom < Vias[5]:
-            self.rapidez = 7
-
+        self.update_rapidez()
         self.update_vel()
 
 
@@ -202,8 +261,6 @@ if __name__ == '__main__':
     reloj = pygame.time.Clock()
     fin_juego = False
 
-
-    ang = 15
     """Eventos"""
     while not fin and (not fin_juego):
         for event in pygame.event.get():
@@ -213,22 +270,22 @@ if __name__ == '__main__':
                 if event.key == pygame.K_DOWN:
                     j.velx = 0
                     j.vely = j.rapidez
-                    j.dir = 2
+                    # j.dir = 2
 
                 if event.key == pygame.K_UP:
                     j.velx = 0
                     j.vely = - j.rapidez
-                    j.dir = 3
+                    # j.dir = 3
 
                 if event.key == pygame.K_RIGHT:
                     j.velx = j.rapidez
                     j.vely = 0
-                    j.dir = 1
+                    # j.dir = 1
 
                 if event.key == pygame.K_LEFT:
                     j.velx = - j.rapidez
                     j.vely = 0
-                    j.dir = 1
+                    # j.dir = 1
 
 
 
@@ -237,13 +294,14 @@ if __name__ == '__main__':
         for g in Generadores:
             if g.temp < 0:
                 if g.Type == "Enemys":
-                    e = Enemy(g.getPosGenetation())
+                    # probabilidad = 30  "enemigo color rojo"
+                    e = Enemy(g.getPosGenetation(), prob2(30))
                     e.velx = - e.rapidez
                     Enemys.add(e)
                     g.temp = random.randrange(Temp0,Temp1)
                 if g.Type == "Obstaculos":
                     o = Obstaculo(g.getPosGenetation())
-                    o.velx = fondo_velx #Velocidad de desplazamiento del mundo // para remplazar
+                    o.velx = fondo_velx
                     Obstaculos.add(o)
                     g.temp = random.randrange(2*Temp0,3*Temp1)
 
@@ -266,10 +324,6 @@ if __name__ == '__main__':
 
         #Dibujado
         ventana.fill(NEGRO)
-
-        # """Dibujado del mundo recorrible"""
-        # for v in Vias:
-        #     pygame.draw.line(ventana, BLANCO, [0, v], [ANCHO, v])
 
         ventana.blit(fondojuego, [fondo_posx,0])
         Jugadores.draw(ventana)
