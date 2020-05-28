@@ -39,6 +39,7 @@ class Enemy(pygame.sprite.Sprite):
         self.vely = 0
         self.estado = 0 # animacion 0 izq  1: abajo 2: arriba
         self.via = posy
+        self.tipo = tipo
         self.temp_giro = random.randrange(Temp0,Temp1) #asegurar que sea cada segundo
 
 
