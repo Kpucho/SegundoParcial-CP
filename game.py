@@ -118,7 +118,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.original_image = pygame.image.load('images/sprites/cars3.png')
-        self.image = self.original_image.subsurface(0, 0, 110, 70)
+        self.image = self.original_image.subsurface(0, 0, 110, 75)
         self.rect = self.image.get_rect()
         self.rect.x = 100
         self.rect.y = ALTO/2
@@ -228,11 +228,11 @@ class Player(pygame.sprite.Sprite):
 
         """Direcciones: 1 horizontal, 2 hacia abajo, 3 hacia arriba """
         if self.dir == 1:
-            j.image = j.original_image.subsurface(0, 0, 110, 70)
+            j.image = j.original_image.subsurface(0, 0, 110, 75)
         elif self.dir == 2:
-            j.image = j.original_image.subsurface(224, 0, 120, 70)
+            j.image = j.original_image.subsurface(224, 0, 120, 75)
         elif self.dir == 3:
-            j.image = j.original_image.subsurface(115, 0, 110, 70)
+            j.image = j.original_image.subsurface(115, 0, 110, 75)
 
         #Limites de la pantalla
         if self.rect.left <= 0:
@@ -360,22 +360,22 @@ if __name__ == '__main__':
                 if event.key == pygame.K_DOWN:
                     j.velx = 0
                     j.vely = j.rapidez
-                    # j.dir = 2
+                    j.dir = 2
 
                 if event.key == pygame.K_UP:
                     j.velx = 0
                     j.vely = - j.rapidez
-                    # j.dir = 3
+                    j.dir = 3
 
                 if event.key == pygame.K_RIGHT:
                     j.velx = j.rapidez
                     j.vely = 0
-                    # j.dir = 1
+                    j.dir = 1
 
                 if event.key == pygame.K_LEFT:
                     j.velx = - j.rapidez
                     j.vely = 0
-                    # j.dir = 1
+                    j.dir = 1
 
 
 
