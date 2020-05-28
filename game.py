@@ -25,7 +25,7 @@ class Generador (pygame.sprite.Sprite):
         return self.rect.y
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, posy):
+    def __init__(self, posy, tipo):
         self.islife = True
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface([50,50])
