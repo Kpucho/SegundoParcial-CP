@@ -26,9 +26,11 @@ class Generador (pygame.sprite.Sprite):
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, posy):
+        self.islife = True
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface([50,50])
-        self.image.fill(ROJO)
+        if self.islife == True :
+            self.image.fill(ROJO)
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
@@ -37,16 +39,24 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.velx
+
+    def Dead(self):
+        self.islife = False
+        self.image.fill(LIGHT_PINK)
 
 class Obstaculo(pygame.sprite.Sprite):
     def __init__(self, posy, Mamada):
         pygame.sprite.Sprite.__init__(self)
+        self.islife = True
         self.isMamado = Mamada
         self.image = pygame.Surface([50,50])
         if (self.isMamado == True):
-            self.image.fill(ROJO)
+            if self.islife == True:
+                self.image.fill(ROJO)
         else:
-            self.image.fill(BLANCO)
+            if self.islife  == True:
+                self.image.fill(BLANCO)
+
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
@@ -55,6 +65,15 @@ class Obstaculo(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.velx
+
+    def Dead(self):
+        self.islife = False
+        if (self.isMamado == True):
+            if self.islife == False:
+                self.image.fill(LIGHT_PINK)
+        else:
+            if self.islife == False:
+                self.image.fill(VERDE)
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -93,6 +112,15 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += self.velx
 
         self.rect.y+=self.vely
+
+        #Limites de la pantalla
+        if self.rect.left <= 0:
+            self.velx = 0
+            self.rect.left = 0
+
+        if self.rect.right >= ANCHO:
+            self.velx = 0
+            self.rect.right = ANCHO
 
         #Franjas negras
         if self.rect.bottom >= Vias[5]:
@@ -243,13 +271,15 @@ if __name__ == '__main__':
                 Enemys.remove(e)
 
             for j in Ls_Enemys:
-                if not impacto:
-                    e.image.fill(LIGHT_PINK)
-                    j.reducevel()
-                    print j.vida
-                    j.vida-=1
-                    """INFO de jugador"""
-                    impacto = True
+                if e.islife == True:
+                    if not impacto:
+                        e.Dead()
+                        j.reducevel()
+                        print j.vida
+                        j.vida-=1
+                        """Sonido de golpe perro"""
+                        """Actualizar INFO de jugador"""
+                        impacto = True
 
         for o in Obstaculos:
             Ls_Obs = pygame.sprite.spritecollide(o,Jugadores,False)
@@ -259,27 +289,27 @@ if __name__ == '__main__':
                 Obstaculos.remove(o)
 
             for j in Ls_Obs:
-                if o.isMamado == True:
-                    if not impacto:
-                        o.image.fill(LIGHT_PINK)
-                        j.reducevel()
-                        print j.vida
-                        j.vida-=1
-                        print "golpe"
-                        """INFO de jugador"""
-                        impacto = True
+                if o.islife == True:
+                    if o.isMamado == True:
+                        if not impacto:
+                            o.Dead()
+                            j.reducevel()
+                            print j.vida
+                            j.vida-=1
+                            """Sonido de golpe perro"""
+                            """Actualizar INFO de jugador"""
+                            impacto = True
 
-                if o.isMamado == False:
-                    if not impacto:
-                        o.image.fill(VERDE)
-                        j.reducevel()
-                        impacto = True
+                    if o.isMamado == False:
+                        if not impacto:
+                            o.Dead()
+                            j.reducevel()
+                            impacto = True
 
         for j in Jugadores:
             if j.vida < 0:
                 """Sonido perro de muerte"""
-                print "Fin del juego"
-                #fin_juego = True
+                fin_juego = True
 
         Jugadores.update()
         Enemys.update()
