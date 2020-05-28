@@ -27,8 +27,10 @@ class Generador (pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, posy):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('images/sprites/cars.png')
-        self.image = self.image.subsurface(0, 310, 140, 50)
+        #self.image = pygame.image.load('images/sprites/cars3.png')
+        #self.image = self.image.subsurface(0, 310, 140, 50)
+        self.image = pygame.Surface([100,100])
+        self.image.fill(NEGRO)
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
