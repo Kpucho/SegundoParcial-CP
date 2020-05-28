@@ -84,11 +84,14 @@ class Enemy(pygame.sprite.Sprite):
 
 class Obstaculo(pygame.sprite.Sprite):
 
-    def __init__(self, posy):
+    def __init__(self, posy, tipo):
         pygame.sprite.Sprite.__init__(self)
 
+        self.tipo = tipo
+        self.color = [BLANCO, VERDE]
+
         self.image = pygame.Surface([64,64])
-        self.image.fill(BLANCO)
+        self.image.fill(self.color[self.tipo])
 
         # self.image = pygame.image.load('images/sprites/obstaculos.png')
         # self.image = self.image.subsurface(0, 530, 80, 115)
@@ -120,16 +123,68 @@ class Player(pygame.sprite.Sprite):
         # self.dir = 1
         # self.bloques = None
 
+        #Modificadores
+
+        # De vida
+        #incremento de vida
+        #inmunidadad
+        self.inmunidad = False
+        self.temp_inmunidad = 2 * FPS
+
+        #modificadores de movimiento
+        self.lentitud = False
+        self.vivacidad = False #Aumento de velocidad con respecto a la base
+
+        # multiplicador de puntaje
+        self.por_dos = False
+
+        self.puntaje = 0
+
+
+
+    def update_puntaje (self):
+        if self.inmunidad:
+            pun_inmunidad = 2
+        else:
+            pun_inmunidad = 0
+
+        if self.por_dos:
+            multiplicador = 2
+        else:
+            multiplicador = 1
+
+        if self.velx >= 0:
+            self.puntaje += multiplicador*((self.rapidez/4) + pun_inmunidad)
+
+
 
     def update_rapidez(self):
 
+        #el aumento de vida y la inmunidad se realiza en colision
+        # El modificador de multiplicador de puntaje en la funcion puntaje del juegador
+
+
+        # En la colision si se coloca uno verdadero, el otro tiene que ser falso
+        # modificadores de velocidad
+        if self.lentitud:
+            valor_lentitud = - 2
+        else:
+            valor_lentitud = 0
+
+        if self.vivacidad:
+            valor_vivacidad = 2
+        else:
+            valor_vivacidad = 0
+
         #Penalizacion por fango o arena
         if self.rect.top <= Vias[1] and self.rect.bottom >= Vias[0]:
-            self.rapidez = 4
+            valor_camino = 3
         elif self.rect.top <= Vias[5] and self.rect.bottom >= Vias[4]:
-            self.rapidez = 4
+            valor_camino = 3
         elif self.rect.top > Vias[0] and self.rect.bottom < Vias[5]:
-            self.rapidez = 7
+            valor_camino = 5
+
+        j.rapidez = valor_camino + valor_lentitud + valor_vivacidad
 
     def update_vel(self):
 
@@ -173,6 +228,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.right = 650
 
         self.update_rapidez()
+        self.update_puntaje()
         self.update_vel()
 
 
@@ -294,13 +350,15 @@ if __name__ == '__main__':
         for g in Generadores:
             if g.temp < 0:
                 if g.Type == "Enemys":
+                    #prob2 retorna 1 o 0 dependiendo de la probabilidad dada
                     # probabilidad = 30  "enemigo color rojo"
                     e = Enemy(g.getPosGenetation(), prob2(30))
                     e.velx = - e.rapidez
                     Enemys.add(e)
                     g.temp = random.randrange(Temp0,Temp1)
                 if g.Type == "Obstaculos":
-                    o = Obstaculo(g.getPosGenetation())
+                    #Probabilidad 60 que salgan arbustos
+                    o = Obstaculo(g.getPosGenetation(), prob2(60))
                     o.velx = fondo_velx
                     Obstaculos.add(o)
                     g.temp = random.randrange(2*Temp0,3*Temp1)
