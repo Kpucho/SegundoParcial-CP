@@ -32,10 +32,12 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
+        self.rapidez = 5
         self.velx = 0
         self.vely = 0
 
-    def update(self):
+    def update(self, fondo_velx):
+        self.velx = - self.rapidez + fondo_velx
         self.rect.x += self.velx
 
 class Obstaculo(pygame.sprite.Sprite):
@@ -49,7 +51,8 @@ class Obstaculo(pygame.sprite.Sprite):
         self.velx = 0
         self.vely = 0
 
-    def update(self):
+    def update(self, fondo_velx):
+        self.velx = fondo_velx
         self.rect.x += self.velx
 
 class Player(pygame.sprite.Sprite):
@@ -179,6 +182,13 @@ if __name__ == '__main__':
             G = Generador(Aux, Type)
             Generadores.add(G)
 
+    #Carga del mapa
+    fondojuego = pygame.image.load('carmap.png')
+    fondo_info = fondojuego.get_rect()
+    fondo_posx = 0
+    limFondo = ANCHO - fondo_info[2]
+
+
     reloj = pygame.time.Clock()
     fin_juego = False
 
@@ -206,12 +216,12 @@ if __name__ == '__main__':
             if g.temp < 0:
                 if g.Type == "Enemys":
                     e = Enemy(g.getPosGenetation())
-                    e.velx = -5
+                    e.velx = - e.rapidez
                     Enemys.add(e)
                     g.temp = random.randrange(Temp0,Temp1)
                 if g.Type == "Obstaculos":
                     o = Obstaculo(g.getPosGenetation())
-                    o.velx = -2 #Velocidad de desplazamiento del mundo // para remplazar
+                    o.velx = fondo_velx #Velocidad de desplazamiento del mundo // para remplazar
                     Obstaculos.add(o)
                     g.temp = random.randrange(2*Temp0,3*Temp1)
 
@@ -224,17 +234,22 @@ if __name__ == '__main__':
             if o.rect.right < 0:
                 Obstaculos.remove(o)
 
+        fondo_velx = - j.rapidez
+        fondo_posx += fondo_velx
+
         Jugadores.update()
-        Enemys.update()
-        Obstaculos.update()
+        Enemys.update(fondo_velx)
+        Obstaculos.update(fondo_velx)
         Generadores.update()
+
         #Dibujado
         ventana.fill(NEGRO)
 
-        """Dibujado del mundo recorrible"""
-        for v in Vias:
-            pygame.draw.line(ventana, BLANCO, [0, v], [ANCHO, v])
+        # """Dibujado del mundo recorrible"""
+        # for v in Vias:
+        #     pygame.draw.line(ventana, BLANCO, [0, v], [ANCHO, v])
 
+        ventana.blit(fondojuego, [fondo_posx,0])
         Jugadores.draw(ventana)
         Enemys.draw(ventana)
         Obstaculos.draw(ventana)
