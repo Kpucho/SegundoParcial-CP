@@ -30,11 +30,18 @@ class Generador (pygame.sprite.Sprite):
         return (Vias[random.randrange(1,3)] + (Vinicial))
 
 class Enemy(pygame.sprite.Sprite):
+
     def __init__(self, posy, tipo):
-        self.islife = True
-        sprite = random.randrange(0, 4)
         pygame.sprite.Sprite.__init__(self)
-        self.image = ENEMIGOS[sprite]
+
+        self.tipo = tipo
+        self.color = [AZUL, ROJO]
+        self.image = pygame.Surface([64,64])
+        self.image.fill(self.color[self.tipo])
+
+        # self.image = pygame.image.load('images/sprites/cars.png')
+        # self.image = self.image.subsurface(0, 310, 140, 50)
+
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
@@ -44,7 +51,6 @@ class Enemy(pygame.sprite.Sprite):
         self.estado = 0 # animacion 0 izq  1: abajo 2: arriba
         self.life = True
         self.via = posy
-        self.tipo = tipo
         self.temp_giro = random.randrange(Temp0,Temp1) #asegurar que sea cada segundo
 
     def corregir_via(self):
@@ -58,7 +64,6 @@ class Enemy(pygame.sprite.Sprite):
             self.vely = 0
             self.rect.bottom = self.via + 128
 
-
     def update_giro(self):
 
         if self.tipo == 1 and self.life:
@@ -66,10 +71,10 @@ class Enemy(pygame.sprite.Sprite):
                 #Verifica a donde ir
                 if self.rect.top <= self.via:
                     self.estado = 1
-                    self.vely = self.rapidez
+                    self.vely = self.rapidez + 1
                 elif self.rect.bottom >= self.via + 128:
                     self.estado = 2
-                    self.vely = - self.rapidez
+                    self.vely = - self.rapidez - 1
                 self.temp_giro = random.randrange(Temp0,Temp1)
             elif self.vely != 0 and self.estado != 0:
                 self.corregir_via()
@@ -84,15 +89,13 @@ class Enemy(pygame.sprite.Sprite):
 
 
     def update(self, fondo_velx):
-
         self.velx = - self.rapidez + fondo_velx
         self.rect.x += self.velx
         self.rect.y += self.vely
 
         self.update_giro()
 
-    def Dead(self):
-        self.islife = False
+class Obstaculo(pygame.sprite.Sprite):
 
     def __init__(self, posy, tipo):
         pygame.sprite.Sprite.__init__(self)
@@ -103,19 +106,11 @@ class Enemy(pygame.sprite.Sprite):
         self.tipo = tipo
         self.color = [BLANCO, VERDE]
 
-class Obstaculo(pygame.sprite.Sprite):
-    def __init__(self, posy, Mamada):
-        pygame.sprite.Sprite.__init__(self)
-        self.islife = True
-        self.isMamado = Mamada
-        self.image = pygame.Surface([50,50])
-        if (self.isMamado == True):
-            if self.islife == True:
-                self.image.fill(ROJO)
-        else:
-            if self.islife  == True:
-                self.image.fill(BLANCO)
+        self.image = pygame.Surface([64,64])
+        self.image.fill(self.color[self.tipo])
 
+        # self.image = pygame.image.load('images/sprites/obstaculos.png')
+        # self.image = self.image.subsurface(0, 530, 80, 115)
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
@@ -164,8 +159,10 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.animacion = 0
-        self.image = DIR[self.animacion]
+        self.image = pygame.Surface([32,32])
+        self.image.fill(VERDE)
+        # self.original_image = pygame.image.load('images/sprites/cars3.png')
+        # self.image = self.original_image.subsurface(0, 0, 110, 80)
         self.rect = self.image.get_rect()
         self.rect.x = 100
         self.rect.y = ALTO/2
@@ -173,11 +170,7 @@ class Player(pygame.sprite.Sprite):
         self.vely = 0
         self.rapidez = 5
         self.vida = 3
-        self.dir = 1
-        self.temp = 0
-        self.impacto = False
-
-
+        # self.dir = 1
         # self.bloques = None
 
         #Modificadores
@@ -201,8 +194,6 @@ class Player(pygame.sprite.Sprite):
         # multiplicador de puntaje
         self.por_dos = False
         self.temp_por_dos = 0
-        self.conta_animacion = 1
-        self.muerto = False
 
         self.puntaje = 0
 
@@ -252,56 +243,29 @@ class Player(pygame.sprite.Sprite):
 
     def update_vel(self):
 
-        self.temp = 0
-        self.impacto = False
+        if j.vely > 0:
+            j.vely = j.rapidez
+        elif j.vely < 0:
+            j.vely = - j.rapidez
 
-        # self.bloques = None
+        if j.velx > 0:
+            j.velx = j.rapidez
+        elif j.velx < 0:
+            j.velx = - j.rapidez
 
-    def update_vel(self):
-        if not self.impacto:
-            if j.vely > 0:
-                j.vely = j.rapidez
-            elif j.vely < 0:
-                j.vely = - j.rapidez
-
-            if j.velx > 0:
-                j.velx = j.rapidez
-            elif j.velx < 0:
-                j.velx = - j.rapidez
-        else:
-            if self.temp == 0:
-                self.impacto = False
-            else:
-                self.temp -= 1
 
     def update(self):
         self.rect.x += self.velx
         self.rect.y+=self.vely
 
-        """Direcciones: 1 horizontal, 2 hacia abajo, 3 hacia arriba """
-        if self.dir == 1:
-            self.image = DIR[self.animacion]
-        elif self.dir == 2:
-            self.image = DIR2[self.animacion]
-        elif self.dir == 3:
-            self.image = DIR3[self.animacion]
+        # """Direcciones: 1 horizontal, 2 hacia abajo, 3 hacia arriba """
+        # if self.dir == 1:
+        #     j.image = j.original_image.subsurface(0, 0, 110, 80)
+        # elif self.dir == 2:
+        #     j.image = j.original_image.subsurface(224, 0, 120, 80)
+        # elif self.dir == 3:
+        #     j.image = j.original_image.subsurface(115, 0, 110, 80)
 
-        if self.animacion < self.conta_animacion:
-            self.animacion += 1
-        else:
-            self.animacion = 0
-
-        if self.muerto:
-            self.image = MUERTE[self.animacion]
-
-        #Limites de la pantalla
-        if self.rect.left <= 0:
-            self.velx = 0
-            self.rect.left = 0
-
-        if self.rect.right >= ANCHO:
-            self.velx = 0
-            self.rect.right = ANCHO
 
         #Franjas negras
         if self.rect.bottom >= Vias[5]:
@@ -345,7 +309,10 @@ class Player(pygame.sprite.Sprite):
 
 
         #Animacion
-
+        if self.inmunidad:
+            self.image.fill(AMARILLO)
+        else:
+            self.image.fill(VERDE)
 
         self.update_rapidez()
         self.update_puntaje()
@@ -444,11 +411,11 @@ if __name__ == '__main__':
     fondo_info = fondojuego.get_rect()
     fondo_posx = 0
     limFondo = ANCHO - fondo_info[2]
-    musica = pygame.mixer.Sound('sonidos/juego.wav')
+
 
     reloj = pygame.time.Clock()
     fin_juego = False
-    musica.play(-1)
+
     """Eventos"""
     while not fin and (not fin_juego):
         for event in pygame.event.get():
@@ -458,22 +425,22 @@ if __name__ == '__main__':
                 if event.key == pygame.K_DOWN:
                     j.velx = 0
                     j.vely = j.rapidez
-                    j.dir = 2
+                    # j.dir = 2
 
                 if event.key == pygame.K_UP:
                     j.velx = 0
                     j.vely = - j.rapidez
-                    j.dir = 3
+                    # j.dir = 3
 
                 if event.key == pygame.K_RIGHT:
                     j.velx = j.rapidez
                     j.vely = 0
-                    j.dir = 1
+                    # j.dir = 1
 
                 if event.key == pygame.K_LEFT:
                     j.velx = - j.rapidez
                     j.vely = 0
-                    j.dir = 1
+                    # j.dir = 1
 
         #CONTROL
         """Activacion generadores"""
@@ -482,7 +449,7 @@ if __name__ == '__main__':
                 if g.Type == "Enemys":
                     #prob2 retorna 1 o 0 dependiendo de la probabilidad dada
                     # probabilidad = 30  "enemigo color rojo"
-                    e = Enemy(g.getPosGenetation(), prob2(30))
+                    e = Enemy(g.getPosGenetation(), prob2(50))
                     e.velx = - e.rapidez
                     Enemys.add(e)
                     g.temp = random.randrange(Temp0,Temp1)
@@ -511,15 +478,16 @@ if __name__ == '__main__':
                 Enemys.remove(e)
 
             for j in Ls_Enemys:
-                if e.islife == True:
-                    if not impacto:
-                        e.Dead()
-                        j.reducevel()
-                        print j.vida
-                        j.vida-=1
-                        """Sonido de golpe perro"""
-                        """Actualizar INFO de jugador"""
-                        impacto = True
+                if e.life == True and not impacto:
+                    e.Dead()
+                    j.impacto_jugador()
+                    j.quitar_vida()
+                    print j.vida
+
+                    """Sonido de golpe perro"""
+                    """Actualizar INFO de jugador"""
+                    impacto = True
+
 
         for o in Obstaculos:
             Ls_Obs = pygame.sprite.spritecollide(o,Jugadores,False)
@@ -572,9 +540,8 @@ if __name__ == '__main__':
         for j in Jugadores:
             if j.vida < 0:
                 """Sonido perro de muerte"""
-                j.muerto = True
-                j.velx = 0
-                j.rapidez = 0
+                print "moriste we"
+                fin_juego = True
 
         fondo_velx = - j.rapidez
         fondo_posx += fondo_velx
