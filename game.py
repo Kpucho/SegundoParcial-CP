@@ -504,20 +504,20 @@ def Juego(ventana):
                     print j.vida
                 if m.tipo == 1: #tipo 1 es x2
                     j.por_dos = True
-                    pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/pordos.wav'))
+                    pygame.mixer.Channel(2).play(pygame.mixer.Sound('sonidos/efectos/pordos.wav'))
                     j.temp_por_dos = Tx2
                 if m.tipo == 2: #tipo 2 es inmunidadad
                     j.inmunidad = True
-                    pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/invencible.wav'))
+                    pygame.mixer.Channel(3).play(pygame.mixer.Sound('sonidos/efectos/invencible.wav'))
                     j.temp_inmunidad = Tinmu
                 if m.tipo == 3: #tipo 3 es vivacidad
                     j.vivacidad = True
-                    pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/acelera.wav'))
+                    pygame.mixer.Channel(4).play(pygame.mixer.Sound('sonidos/efectos/acelera.wav'))
                     j.temp_vivacidad = Tviva
                 if m.tipo == 4: #tipo 4 es lentitud
                     j.lentitud = True
                     j.temp_lentitud = Tlenti
-                    pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/lentitud.wav'))
+                    pygame.mixer.Channel(5).play(pygame.mixer.Sound('sonidos/efectos/lentitud.wav'))
 
                 Modificadores.remove(m)
 
