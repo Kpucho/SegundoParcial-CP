@@ -96,18 +96,21 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Obstaculo(pygame.sprite.Sprite):
-    def __init__(self, posy, Mamada):
-        pygame.sprite.Sprite.__init__(self)
-        self.islife = True
-        self.isMamado = Mamada
-        self.image = pygame.Surface([50,50])
-        if (self.isMamado == True):
-            if self.islife == True:
-                self.image.fill(ROJO)
-        else:
-            if self.islife  == True:
-                self.image.fill(BLANCO)
 
+    def __init__(self, posy, tipo):
+        pygame.sprite.Sprite.__init__(self)
+
+        self.life = True
+        #tipo 0 es arbol
+        #tipo 1 es arbusto
+        self.tipo = tipo
+        self.color = [BLANCO, VERDE]
+
+        self.image = pygame.Surface([64,64])
+        self.image.fill(self.color[self.tipo])
+
+        # self.image = pygame.image.load('images/sprites/obstaculos.png')
+        # self.image = self.image.subsurface(0, 530, 80, 115)
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
