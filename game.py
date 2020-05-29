@@ -376,6 +376,33 @@ class Player(pygame.sprite.Sprite):
         if self.lentitud:
             ventana.blit(MODIFI[4],[138,630])
 
+def dibujar_fondo(fondojuego, lista_fondox, fondo_velx):
+    creacion = False
+    fondo_info = fondojuego.get_rect()
+    limFondo = ANCHO - fondo_info[2]
+    tam = len(lista_fondox)
+    print tam
+    lista_fondox_aux = []
+    for posx in lista_fondox:
+
+        if posx <= - fondo_info[2]:
+            break;
+
+        elif posx <= limFondo and tam == 1:
+            #Crea otro fondo
+            creacion = True
+            lista_fondox_aux.append(limFondo)
+        else:
+            # print 'd', posx, 'x', fondo_velx
+            aux = posx + fondo_velx
+            lista_fondox_aux.append(aux)
+            ventana.blit(fondojuego, [aux,0])
+
+    if creacion:
+        lista_fondox_aux.append(800)
+        creacion = False
+    return lista_fondox_aux
+
 
 
 """                          WORLD                                        """
@@ -412,10 +439,10 @@ def Juego(ventana):
     Generadores.add(G)
 
     #Carga del mapa
+    l_fondoposx = []
     fondojuego = pygame.image.load('carmap.png')
-    fondo_info = fondojuego.get_rect()
     fondo_posx = 0
-    limFondo = ANCHO - fondo_info[2]
+    l_fondoposx.append(fondo_posx)
     musica = pygame.mixer.Sound('sonidos/juego.wav')
 
     reloj = pygame.time.Clock()
@@ -551,7 +578,6 @@ def Juego(ventana):
                 fin_juego = True
 
         fondo_velx = - j.rapidez
-        fondo_posx += fondo_velx
 
         Jugadores.update()
         Enemys.update(fondo_velx)
@@ -561,7 +587,7 @@ def Juego(ventana):
 
         #Dibujado
         ventana.fill(NEGRO)
-        ventana.blit(fondojuego, [fondo_posx,0])
+        l_fondoposx = dibujar_fondo(fondojuego, l_fondoposx, fondo_velx)
         Jugadores.draw(ventana)
         Enemys.draw(ventana)
         Obstaculos.draw(ventana)
