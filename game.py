@@ -728,12 +728,26 @@ def InfoJuego(ventana):
         ventana.blit(ENEMIGOS[2], [550, 200])
         ventana.blit(ENEMIGOS[3], [640, 200])
 
+        draw_text('Cuidado, hay obstaculos:', fuente, BLANCO, ventana, [100,320])
+        ventana.blit(OBSTACULOS[0], [450, 300])
+        ventana.blit(OBSTACULOS[1], [540, 320])
+
+        draw_text('No olvides los potenciadores:', fuente, BLANCO, ventana, [25,420])
+        ventana.blit(MODIFI[0], [435, 400])
+        ventana.blit(MODIFI[1], [509, 400])
+        ventana.blit(MODIFI[2], [583, 400])
+        ventana.blit(MODIFI[3], [657, 400])
+        ventana.blit(MODIFI[4], [731, 400])
+
+        draw_text('Y mas importante diviertete', fuente, BLANCO, ventana, [200,520])
+
+
         mx, my = pygame.mouse.get_pos()
         draw_text('Como jugar', fuente, BLANCO, ventana, [300, 50])
-        draw_text('Satanic Cars Alv', fuente, BLANCO, ventana, [300, 650])
-        boton1 = pygame.Rect(100, 500, 250, 50)
+        draw_text('Satanic Cars Alv', fuente, BLANCO, ventana, [300, 670])
+        boton1 = pygame.Rect(100, 580, 250, 50)
 
-        boton2 = pygame.Rect(450, 500, 250, 50)
+        boton2 = pygame.Rect(450, 580, 250, 50)
         if boton1.collidepoint((mx, my)):
             if click:
                 iniciar = True
@@ -742,9 +756,9 @@ def InfoJuego(ventana):
                 fin = True
 
         pygame.draw.rect(ventana, LIGHT_ROJO, boton1)
-        draw_text('Jugar', fuente, BLANCO, ventana, [120, 510])
+        draw_text('Jugar', fuente, BLANCO, ventana, [190, 590])
         pygame.draw.rect(ventana, LIGHT_ROJO, boton2)
-        draw_text('Salir', fuente, BLANCO, ventana, [540, 510])
+        draw_text('Salir', fuente, BLANCO, ventana, [540, 590])
 
         click = False
 
