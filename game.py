@@ -27,10 +27,9 @@ class Generador (pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, posy, tipo):
         self.islife = True
+        sprite = random.randrange(0, 4)
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([50,50])
-        if self.islife == True :
-            self.image.fill(ROJO)
+        self.image = ENEMIGOS[sprite]
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
@@ -41,6 +40,7 @@ class Enemy(pygame.sprite.Sprite):
         self.via = posy
         self.tipo = tipo
         self.temp_giro = random.randrange(Temp0,Temp1) #asegurar que sea cada segundo
+
 
 
     def update_giro(self):
@@ -71,6 +71,7 @@ class Enemy(pygame.sprite.Sprite):
 
 
     def update(self, fondo_velx):
+
         self.velx = - self.rapidez + fondo_velx
         self.rect.x += self.velx
         self.rect.y += self.vely
@@ -79,7 +80,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def Dead(self):
         self.islife = False
-        self.image.fill(LIGHT_PINK)
+
 
 class Obstaculo(pygame.sprite.Sprite):
     def __init__(self, posy, Mamada):
@@ -117,8 +118,8 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.original_image = pygame.image.load('images/sprites/cars3.png')
-        self.image = self.original_image.subsurface(0, 0, 110, 75)
+        self.animacion = 0
+        self.image = DIR[self.animacion]
         self.rect = self.image.get_rect()
         self.rect.x = 100
         self.rect.y = ALTO/2
@@ -129,6 +130,7 @@ class Player(pygame.sprite.Sprite):
         self.dir = 1
         self.temp = 0
         self.impacto = False
+
 
         # self.bloques = None
 
@@ -148,6 +150,9 @@ class Player(pygame.sprite.Sprite):
         self.por_dos = False
 
         self.puntaje = 0
+
+        self.muerto = False
+        self.conta_animacion = 1
 
 
 
@@ -228,11 +233,19 @@ class Player(pygame.sprite.Sprite):
 
         """Direcciones: 1 horizontal, 2 hacia abajo, 3 hacia arriba """
         if self.dir == 1:
-            j.image = j.original_image.subsurface(0, 0, 110, 75)
+            self.image = DIR[self.animacion]
         elif self.dir == 2:
-            j.image = j.original_image.subsurface(224, 0, 120, 75)
+            self.image = DIR2[self.animacion]
         elif self.dir == 3:
-            j.image = j.original_image.subsurface(115, 0, 110, 75)
+            self.image = DIR3[self.animacion]
+
+        if self.animacion < self.conta_animacion:
+            self.animacion += 1
+        else:
+            self.animacion = 0
+
+        if self.muerto:
+            self.image = MUERTE[self.animacion]
 
         #Limites de la pantalla
         if self.rect.left <= 0:
@@ -448,7 +461,9 @@ if __name__ == '__main__':
         for j in Jugadores:
             if j.vida < 0:
                 """Sonido perro de muerte"""
-                fin_juego = True
+                j.muerto = True
+                j.velx = 0
+                j.rapidez = 0
 
         fondo_velx = - j.rapidez
         fondo_posx += fondo_velx
