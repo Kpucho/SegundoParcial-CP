@@ -94,8 +94,6 @@ class Enemy(pygame.sprite.Sprite):
     def Dead(self):
         self.islife = False
 
-<<<<<<< HEAD
-=======
     def __init__(self, posy, tipo):
         pygame.sprite.Sprite.__init__(self)
 
@@ -104,7 +102,6 @@ class Enemy(pygame.sprite.Sprite):
         #tipo 1 es arbusto
         self.tipo = tipo
         self.color = [BLANCO, VERDE]
->>>>>>> news
 
 class Obstaculo(pygame.sprite.Sprite):
     def __init__(self, posy, Mamada):
@@ -136,16 +133,6 @@ class Obstaculo(pygame.sprite.Sprite):
         self.velx = fondo_velx
         self.rect.x += self.velx
 
-<<<<<<< HEAD
-    def Dead(self):
-        self.islife = False
-        if (self.isMamado == True):
-            if self.islife == False:
-                self.image.fill(LIGHT_PINK)
-        else:
-            if self.islife == False:
-                self.image.fill(VERDE)
-=======
 class Modificador(pygame.sprite.Sprite):
 
     def __init__(self, posy, type):
@@ -172,7 +159,6 @@ class Modificador(pygame.sprite.Sprite):
     def update(self, fondo_velx):
         self.velx = - 2
         self.rect.x += self.velx
->>>>>>> news
 
 class Player(pygame.sprite.Sprite):
 
@@ -215,17 +201,11 @@ class Player(pygame.sprite.Sprite):
         # multiplicador de puntaje
         self.por_dos = False
         self.temp_por_dos = 0
+        self.conta_animacion = 1
+        self.muerto = False
 
         self.puntaje = 0
 
-<<<<<<< HEAD
-        self.muerto = False
-        self.conta_animacion = 1
-
-
-
-=======
->>>>>>> news
     def update_puntaje (self):
         if self.inmunidad:
             pun_inmunidad = 0
@@ -365,25 +345,15 @@ class Player(pygame.sprite.Sprite):
 
 
         #Animacion
-        if self.inmunidad:
-            self.image.fill(AMARILLO)
-        else:
-            self.image.fill(VERDE)
+
 
         self.update_rapidez()
         self.update_puntaje()
         self.update_vel()
 
-<<<<<<< HEAD
-    def reducevel(self):
-        self.Temp = 10
-        self.impacto = True
-        self.rapidez = 1
-=======
     def impacto_jugador(self):
         self.impacto = True
         self.temp_impacto = 25
->>>>>>> news
 
     def quitar_vida(self):
         if not self.inmunidad:
@@ -517,17 +487,6 @@ if __name__ == '__main__':
                     Enemys.add(e)
                     g.temp = random.randrange(Temp0,Temp1)
                 if g.Type == "Obstaculos":
-<<<<<<< HEAD
-                    if (random.randrange(101) <= 50):
-                        Mamada = True
-                    else:
-                        Mamada = False
-                    o = Obstaculo(g.getPosGenetation(),Mamada)
-
-                    o.velx = -2 #Velocidad de desplazamiento del mundo // para remplazar
-                    Obstaculos.add(o)
-                    g.temp = random.randrange(2*Temp0,3*Temp1)
-=======
                     #Probabilidad 60 que salgan arbustos
                     # tipo 1 arbusto tipo 0 arbol
                     o = Obstaculo(g.getPosGenetation(), prob2(60))
@@ -541,22 +500,17 @@ if __name__ == '__main__':
                         m.velx = fondo_velx
                         Modificadores.add(m)
                         g.temp = random.randrange(3*Temp0,6*Temp1)
->>>>>>> news
 
         """Eliminacion de enemy fuera de pantalla y Colisionessss"""
         for e in Enemys:
             Ls_Enemys = pygame.sprite.spritecollide(e,Jugadores,False)
-<<<<<<< HEAD
-=======
             #Verificar importancia de variable impacto
->>>>>>> news
             impacto = False
 
             if e.rect.right < 0:
                 Enemys.remove(e)
 
             for j in Ls_Enemys:
-<<<<<<< HEAD
                 if e.islife == True:
                     if not impacto:
                         e.Dead()
@@ -566,18 +520,6 @@ if __name__ == '__main__':
                         """Sonido de golpe perro"""
                         """Actualizar INFO de jugador"""
                         impacto = True
-=======
-                if e.life == True and not impacto:
-                    e.Dead()
-                    j.impacto_jugador()
-                    j.quitar_vida()
-                    print j.vida
-
-                    """Sonido de golpe perro"""
-                    """Actualizar INFO de jugador"""
-                    impacto = True
-
->>>>>>> news
 
         for o in Obstaculos:
             Ls_Obs = pygame.sprite.spritecollide(o,Jugadores,False)
@@ -587,24 +529,6 @@ if __name__ == '__main__':
                 Obstaculos.remove(o)
 
             for j in Ls_Obs:
-<<<<<<< HEAD
-                if o.islife == True:
-                    if o.isMamado == True:
-                        if not impacto:
-                            o.Dead()
-                            j.reducevel()
-                            print j.vida
-                            j.vida-=1
-                            """Sonido de golpe perro"""
-                            """Actualizar INFO de jugador"""
-                            impacto = True
-
-                    if o.isMamado == False:
-                        if not impacto:
-                            o.Dead()
-                            j.reducevel()
-                            impacto = True
-=======
                 if o.life == True and not impacto:
                     #Arbol
                     if o.tipo == 0:
@@ -644,19 +568,13 @@ if __name__ == '__main__':
                     j.temp_lentitud = Tlenti
 
                 Modificadores.remove(m)
->>>>>>> news
 
         for j in Jugadores:
             if j.vida < 0:
                 """Sonido perro de muerte"""
-<<<<<<< HEAD
                 j.muerto = True
                 j.velx = 0
                 j.rapidez = 0
-=======
-                print "moriste we"
-                fin_juego = True
->>>>>>> news
 
         fondo_velx = - j.rapidez
         fondo_posx += fondo_velx
