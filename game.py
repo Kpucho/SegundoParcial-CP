@@ -352,11 +352,11 @@ class Player(pygame.sprite.Sprite):
 
     def impacto_jugador(self):
         self.impacto = True
-        pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/choque.wav'))
         self.temp_impacto = 25
 
     def quitar_vida(self):
         if not self.inmunidad:
+            pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/choque.wav'))
             self.vida -= 1
             self.inmunidad = True
             self.temp_inmunidad = 4 * FPS
@@ -487,9 +487,6 @@ def Juego(ventana):
                     e.Dead()
                     j.impacto_jugador()
                     j.quitar_vida()
-
-
-                    """Actualizar INFO de jugador"""
                     impacto = True
 
         for o in Obstaculos:
@@ -507,9 +504,7 @@ def Juego(ventana):
                         j.impacto_jugador()
                         j.quitar_vida()
                         # print j.vida
-
                         """Sonido de golpe perro"""
-                        """Actualizar INFO de jugador"""
                     else: # Arbusto
                         o.Dead()
                         j.impacto_jugador()
