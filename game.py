@@ -1,5 +1,6 @@
 import pygame
 from config import *
+import random
 
 
 class Generador (pygame.sprite.Sprite):
@@ -31,10 +32,9 @@ class Generador (pygame.sprite.Sprite):
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, posy, tipo):
-        self.islife = True
-
-        sprite = random.randrange(0, 4)
         pygame.sprite.Sprite.__init__(self)
+        self.islife = True
+        sprite = random.randrange(0, 4)
         self.image = ENEMIGOS[sprite]
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
@@ -93,17 +93,7 @@ class Enemy(pygame.sprite.Sprite):
 
         self.update_giro()
 
-    def Dead(self):
-        self.islife = False
 
-    def __init__(self, posy, tipo):
-        pygame.sprite.Sprite.__init__(self)
-
-        self.life = True
-        #tipo 0 es arbol
-        #tipo 1 es arbusto
-        self.tipo = tipo
-        self.color = [BLANCO, VERDE]
 
 class Obstaculo(pygame.sprite.Sprite):
     def __init__(self, posy, Mamada):
