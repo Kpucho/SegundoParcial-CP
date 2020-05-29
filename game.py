@@ -344,8 +344,6 @@ class Player(pygame.sprite.Sprite):
 
 
         #Animacion
-
-
         self.update_rapidez()
         self.update_puntaje()
         self.update_vel()
@@ -428,8 +426,6 @@ def Juego(ventana):
 
     j = Player()
     Jugadores.add(j)
-
-
 
     """Construcion de generadores"""
     for i in range(6):
