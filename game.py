@@ -25,18 +25,11 @@ class Generador (pygame.sprite.Sprite):
         return self.rect.y
 
 class Enemy(pygame.sprite.Sprite):
-
     def __init__(self, posy, tipo):
+        self.islife = True
+        sprite = random.randrange(0, 4)
         pygame.sprite.Sprite.__init__(self)
-
-        self.tipo = tipo
-        self.color = [AZUL, ROJO]
-        self.image = pygame.Surface([64,64])
-        self.image.fill(self.color[self.tipo])
-
-        # self.image = pygame.image.load('images/sprites/cars.png')
-        # self.image = self.image.subsurface(0, 310, 140, 50)
-
+        self.image = ENEMIGOS[sprite]
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
@@ -45,7 +38,9 @@ class Enemy(pygame.sprite.Sprite):
         self.vely = 0
         self.estado = 0 # animacion 0 izq  1: abajo 2: arriba
         self.via = posy
+        self.tipo = tipo
         self.temp_giro = random.randrange(Temp0,Temp1) #asegurar que sea cada segundo
+
 
 
     def update_giro(self):
@@ -76,25 +71,30 @@ class Enemy(pygame.sprite.Sprite):
 
 
     def update(self, fondo_velx):
+
         self.velx = - self.rapidez + fondo_velx
         self.rect.x += self.velx
         self.rect.y += self.vely
 
         self.update_giro()
 
+    def Dead(self):
+        self.islife = False
+
+
 class Obstaculo(pygame.sprite.Sprite):
-
-    def __init__(self, posy, tipo):
+    def __init__(self, posy, Mamada):
         pygame.sprite.Sprite.__init__(self)
+        self.islife = True
+        self.isMamado = Mamada
+        self.image = pygame.Surface([50,50])
+        if (self.isMamado == True):
+            if self.islife == True:
+                self.image.fill(ROJO)
+        else:
+            if self.islife  == True:
+                self.image.fill(BLANCO)
 
-        self.tipo = tipo
-        self.color = [BLANCO, VERDE]
-
-        self.image = pygame.Surface([64,64])
-        self.image.fill(self.color[self.tipo])
-
-        # self.image = pygame.image.load('images/sprites/obstaculos.png')
-        # self.image = self.image.subsurface(0, 530, 80, 115)
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
@@ -105,14 +105,21 @@ class Obstaculo(pygame.sprite.Sprite):
         self.velx = fondo_velx
         self.rect.x += self.velx
 
+    def Dead(self):
+        self.islife = False
+        if (self.isMamado == True):
+            if self.islife == False:
+                self.image.fill(LIGHT_PINK)
+        else:
+            if self.islife == False:
+                self.image.fill(VERDE)
+
 class Player(pygame.sprite.Sprite):
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([32,32])
-        self.image.fill(VERDE)
-        # self.original_image = pygame.image.load('images/sprites/cars3.png')
-        # self.image = self.original_image.subsurface(0, 0, 110, 80)
+        self.animacion = 0
+        self.image = DIR[self.animacion]
         self.rect = self.image.get_rect()
         self.rect.x = 100
         self.rect.y = ALTO/2
@@ -120,7 +127,11 @@ class Player(pygame.sprite.Sprite):
         self.vely = 0
         self.rapidez = 7
         self.vida = 3
-        # self.dir = 1
+        self.dir = 1
+        self.temp = 0
+        self.impacto = False
+
+
         # self.bloques = None
 
         #Modificadores
@@ -139,6 +150,9 @@ class Player(pygame.sprite.Sprite):
         self.por_dos = False
 
         self.puntaje = 0
+
+        self.muerto = False
+        self.conta_animacion = 1
 
 
 
@@ -190,30 +204,57 @@ class Player(pygame.sprite.Sprite):
 
     def update_vel(self):
 
-        if j.vely > 0:
-            j.vely = j.rapidez
-        elif j.vely < 0:
-            j.vely = - j.rapidez
+        self.temp = 0
+        self.impacto = False
 
-        if j.velx > 0:
-            j.velx = j.rapidez
-        elif j.velx < 0:
-            j.velx = - j.rapidez
+        # self.bloques = None
 
+    def update_vel(self):
+        if not self.impacto:
+            if j.vely > 0:
+                j.vely = j.rapidez
+            elif j.vely < 0:
+                j.vely = - j.rapidez
+
+            if j.velx > 0:
+                j.velx = j.rapidez
+            elif j.velx < 0:
+                j.velx = - j.rapidez
+        else:
+            if self.temp == 0:
+                self.impacto = False
+            else:
+                self.temp -= 1
 
     def update(self):
         self.rect.x += self.velx
 
         self.rect.y+=self.vely
 
-        # """Direcciones: 1 horizontal, 2 hacia abajo, 3 hacia arriba """
-        # if self.dir == 1:
-        #     j.image = j.original_image.subsurface(0, 0, 110, 80)
-        # elif self.dir == 2:
-        #     j.image = j.original_image.subsurface(224, 0, 120, 80)
-        # elif self.dir == 3:
-        #     j.image = j.original_image.subsurface(115, 0, 110, 80)
+        """Direcciones: 1 horizontal, 2 hacia abajo, 3 hacia arriba """
+        if self.dir == 1:
+            self.image = DIR[self.animacion]
+        elif self.dir == 2:
+            self.image = DIR2[self.animacion]
+        elif self.dir == 3:
+            self.image = DIR3[self.animacion]
 
+        if self.animacion < self.conta_animacion:
+            self.animacion += 1
+        else:
+            self.animacion = 0
+
+        if self.muerto:
+            self.image = MUERTE[self.animacion]
+
+        #Limites de la pantalla
+        if self.rect.left <= 0:
+            self.velx = 0
+            self.rect.left = 0
+
+        if self.rect.right >= ANCHO:
+            self.velx = 0
+            self.rect.right = ANCHO
 
         #Franjas negras
         if self.rect.bottom >= Vias[5]:
@@ -233,6 +274,10 @@ class Player(pygame.sprite.Sprite):
         self.update_puntaje()
         self.update_vel()
 
+    def reducevel(self):
+        self.Temp = 10
+        self.impacto = True
+        self.rapidez = 1
 
 
 """                          WORLD                                        """
@@ -314,11 +359,11 @@ if __name__ == '__main__':
     fondo_info = fondojuego.get_rect()
     fondo_posx = 0
     limFondo = ANCHO - fondo_info[2]
-
+    musica = pygame.mixer.Sound('sonidos/juego.wav')
 
     reloj = pygame.time.Clock()
     fin_juego = False
-
+    musica.play(-1)
     """Eventos"""
     while not fin and (not fin_juego):
         for event in pygame.event.get():
@@ -328,22 +373,22 @@ if __name__ == '__main__':
                 if event.key == pygame.K_DOWN:
                     j.velx = 0
                     j.vely = j.rapidez
-                    # j.dir = 2
+                    j.dir = 2
 
                 if event.key == pygame.K_UP:
                     j.velx = 0
                     j.vely = - j.rapidez
-                    # j.dir = 3
+                    j.dir = 3
 
                 if event.key == pygame.K_RIGHT:
                     j.velx = j.rapidez
                     j.vely = 0
-                    # j.dir = 1
+                    j.dir = 1
 
                 if event.key == pygame.K_LEFT:
                     j.velx = - j.rapidez
                     j.vely = 0
-                    # j.dir = 1
+                    j.dir = 1
 
 
 
@@ -359,20 +404,66 @@ if __name__ == '__main__':
                     Enemys.add(e)
                     g.temp = random.randrange(Temp0,Temp1)
                 if g.Type == "Obstaculos":
-                    #Probabilidad 60 que salgan arbustos
-                    o = Obstaculo(g.getPosGenetation(), prob2(60))
-                    o.velx = fondo_velx
+                    if (random.randrange(101) <= 50):
+                        Mamada = True
+                    else:
+                        Mamada = False
+                    o = Obstaculo(g.getPosGenetation(),Mamada)
+
+                    o.velx = -2 #Velocidad de desplazamiento del mundo // para remplazar
                     Obstaculos.add(o)
                     g.temp = random.randrange(2*Temp0,3*Temp1)
 
-        """Eliminacion de enemy fuera de pantalla"""
+        """Eliminacion de enemy fuera de pantalla y Colisionessss"""
         for e in Enemys:
+            Ls_Enemys = pygame.sprite.spritecollide(e,Jugadores,False)
+            impacto = False
+
             if e.rect.right < 0:
                 Enemys.remove(e)
 
+            for j in Ls_Enemys:
+                if e.islife == True:
+                    if not impacto:
+                        e.Dead()
+                        j.reducevel()
+                        print j.vida
+                        j.vida-=1
+                        """Sonido de golpe perro"""
+                        """Actualizar INFO de jugador"""
+                        impacto = True
+
         for o in Obstaculos:
+            Ls_Obs = pygame.sprite.spritecollide(o,Jugadores,False)
+            impacto = False
+
             if o.rect.right < 0:
                 Obstaculos.remove(o)
+
+            for j in Ls_Obs:
+                if o.islife == True:
+                    if o.isMamado == True:
+                        if not impacto:
+                            o.Dead()
+                            j.reducevel()
+                            print j.vida
+                            j.vida-=1
+                            """Sonido de golpe perro"""
+                            """Actualizar INFO de jugador"""
+                            impacto = True
+
+                    if o.isMamado == False:
+                        if not impacto:
+                            o.Dead()
+                            j.reducevel()
+                            impacto = True
+
+        for j in Jugadores:
+            if j.vida < 0:
+                """Sonido perro de muerte"""
+                j.muerto = True
+                j.velx = 0
+                j.rapidez = 0
 
         fondo_velx = - j.rapidez
         fondo_posx += fondo_velx
