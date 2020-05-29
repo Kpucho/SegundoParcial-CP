@@ -65,8 +65,12 @@ OBSTACULOS = []
 IMAGEN_OBSTACULOS = pygame.image.load('images/sprites/obstaculos.png')
 OBSTACULOS.append(IMAGEN_OBSTACULOS.subsurface(0, 530, 80, 125))
 
-
-
+"""Modificadores"""
+im_modificadores = pygame.image.load('images/sprites/modificadores.png')
+MODIFI = []
+for c in range(5):
+    cuadro=im_modificadores.subsurface(64*c,0,64,64)
+    MODIFI.append(cuadro)
 
 #pExito = probabilidad de conseguir cierto objetivo
 def prob2(pExito):

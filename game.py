@@ -98,14 +98,14 @@ class Enemy(pygame.sprite.Sprite):
 class Obstaculo(pygame.sprite.Sprite):
     def __init__(self, posy, Mamada):
         pygame.sprite.Sprite.__init__(self)
-        self.islife = True
+        self.life = True
         self.isMamado = Mamada
         self.image = pygame.Surface([50,50])
         if (self.isMamado == True):
-            if self.islife == True:
+            if self.life == True:
                 self.image.fill(ROJO)
         else:
-            if self.islife  == True:
+            if self.life  == True:
                 self.image.fill(BLANCO)
 
         self.rect = self.image.get_rect()
@@ -116,7 +116,7 @@ class Obstaculo(pygame.sprite.Sprite):
 
     def Dead(self):
         self.life = False
-        if self.tipo == 0: #Arbol
+        if self.isMamado == 0: #Arbol
             self.image.fill(LIGHT_PINK)
         else: #arbusto
             self.image.fill(NEGRO)
@@ -135,10 +135,10 @@ class Modificador(pygame.sprite.Sprite):
         #tipo 3 es vivacidad
         #tipo 4 es lentitud
         self.tipo = type
-        self.color = [VERDE, DORADO, BLANCO, ROJO, AZUL]
-
-        self.image = pygame.Surface([32,32])
-        self.image.fill(self.color[self.tipo])
+        #self.color = [VERDE, DORADO, BLANCO, ROJO, AZUL]
+        self.image = MODIFI[self.tipo]
+        #self.image = pygame.Surface([32,32])
+        #self.image.fill(self.color[self.tipo])
 
         # self.image = pygame.image.load('images/sprites/obstaculos.png')
         # self.image = self.image.subsurface(0, 530, 80, 115)
@@ -149,7 +149,7 @@ class Modificador(pygame.sprite.Sprite):
         self.vely = 0
 
     def update(self, fondo_velx):
-        self.velx = - 2
+        self.velx = fondo_velx
         self.rect.x += self.velx
 
 class Player(pygame.sprite.Sprite):
@@ -371,6 +371,8 @@ def Juego(ventana):
     j = Player()
     Jugadores.add(j)
 
+
+
     """Construcion de generadores"""
     for i in range(6):
         Aux = Vinicial+i*TamVias
@@ -402,22 +404,22 @@ def Juego(ventana):
             if event.type == pygame.QUIT:
                 fin = True
             if event.type ==pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     j.velx = 0
                     j.vely = j.rapidez
                     j.dir = 2
 
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
                     j.velx = 0
                     j.vely = - j.rapidez
                     j.dir = 3
 
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     j.velx = j.rapidez
                     j.vely = 0
                     j.dir = 1
 
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     j.velx = - j.rapidez
                     j.vely = 0
                     j.dir = 1
@@ -444,7 +446,7 @@ def Juego(ventana):
                     i = prob5(80)
                     if (i != -1):
                         m = Modificador(g.getposModifi(),prob5(80))
-                        m.velx = fondo_velx
+                        m.velx = -fondo_velx
                         Modificadores.add(m)
                         g.temp = random.randrange(3*Temp0,6*Temp1)
 
@@ -477,7 +479,7 @@ def Juego(ventana):
             for j in Ls_Obs:
                 if o.life == True and not impacto:
                     #Arbol
-                    if o.tipo == 0:
+                    if o.isMamado == 0:
                         o.Dead()
                         j.impacto_jugador()
                         j.quitar_vida()
@@ -519,6 +521,7 @@ def Juego(ventana):
 
                 Modificadores.remove(m)
 
+
         for j in Jugadores:
             if j.vida < 0:
                 """Sonido perro de muerte"""
@@ -539,13 +542,19 @@ def Juego(ventana):
 
         #Dibujado
         ventana.fill(NEGRO)
-
         ventana.blit(fondojuego, [fondo_posx,0])
         Jugadores.draw(ventana)
         Enemys.draw(ventana)
         Obstaculos.draw(ventana)
         Modificadores.draw(ventana)
         Generadores.draw(ventana)
+
+        for v in range(j.vida + 1):
+            if j.inmunidad == False:
+                ventana.blit(MODIFI[0],[10+64*v,10])
+            elif j.inmunidad == True:
+                ventana.blit(MODIFI[2],[10+64*v,10])
+
         pygame.display.flip()
         reloj.tick(FPS)
 
@@ -561,7 +570,8 @@ def FinJuego(ventana, Puntaje):
     click = False
     musica.play(-1)
     fin = False
-    while (not fin):
+    volver = False
+    while (not fin) and (not volver):
         pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -580,7 +590,7 @@ def FinJuego(ventana, Puntaje):
         if boton1.collidepoint((mx, my)):
             if click:
                 print "volver a jugar"
-                Juego(ventana)
+                volver = True
         if boton2.collidepoint((mx, my)):
             if click:
                 fin = True
@@ -590,6 +600,10 @@ def FinJuego(ventana, Puntaje):
         draw_text('Salir', fuente, BLANCO, ventana, [540, 410])
 
         click = False
+
+    if not fin:
+        musica.stop()
+        Juego(ventana)
 
 if __name__ == '__main__':
 
