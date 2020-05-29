@@ -14,10 +14,10 @@ LIGHT_ROJO = [255,55,55]
 LIGHT_PINK = [212, 159, 183]
 
 #Temporizadores de modificadores
-Tx2 = 20
-Tinmu = 10
-Tviva = 25
-Tlenti = 20
+Tx2 = 100
+Tinmu = 60
+Tviva = 80
+Tlenti = 80
 
 #Control
 Temp0 = 40
@@ -114,7 +114,7 @@ def prob3(pExito):
 
 #pExito = probabilidad de conseguir cierto objetivo
 def prob5(pExito):
-    prob = random.randrange(121)
+    prob = random.randrange(pExito)
     if prob < pExito/5:
         return 4
     elif prob < 2*pExito/5:
@@ -125,5 +125,3 @@ def prob5(pExito):
         return 1
     elif prob < pExito:
         return 0
-    else:
-        return -1

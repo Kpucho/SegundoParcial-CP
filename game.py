@@ -68,10 +68,10 @@ class Enemy(pygame.sprite.Sprite):
                 #Verifica a donde ir
                 if self.rect.top <= self.via:
                     self.estado = 1
-                    self.vely = self.rapidez
+                    self.vely = self.rapidez + 1
                 elif self.rect.bottom >= self.via + 128:
                     self.estado = 2
-                    self.vely = - self.rapidez
+                    self.vely = - self.rapidez - 1
                 self.temp_giro = random.randrange(Temp0,Temp1)
             elif self.vely != 0 and self.estado != 0:
                 self.corregir_via()
@@ -361,6 +361,23 @@ class Player(pygame.sprite.Sprite):
             self.inmunidad = True
             self.temp_inmunidad = 4 * FPS
 
+    def info_jugador(self):
+        for v in range(self.vida + 1):
+            if self.inmunidad == False:
+                ventana.blit(MODIFI[0],[10+64*v,10])
+            elif self.inmunidad == True:
+                ventana.blit(MODIFI[2],[10+64*v,10])
+        if self.por_dos:
+            ventana.blit(MODIFI[1],[10,630])
+
+        if self.vivacidad:
+            ventana.blit(MODIFI[3],[74,630])
+
+        if self.lentitud:
+            ventana.blit(MODIFI[4],[138,630])
+
+
+
 """                          WORLD                                        """
 
 def draw_text(msj, font, color, surface, cord):
@@ -451,11 +468,10 @@ def Juego(ventana):
                     g.temp = random.randrange(2*Temp0,3*Temp1)
                 if g.Type == "Modificadores":
                     i = prob5(80)
-                    if (i != -1):
-                        m = Modificador(g.getposModifi(),prob5(80))
-                        m.velx = -fondo_velx
-                        Modificadores.add(m)
-                        g.temp = random.randrange(3*Temp0,6*Temp1)
+                    m = Modificador(g.getposModifi(), i)
+                    m.velx = -fondo_velx
+                    Modificadores.add(m)
+                    g.temp = random.randrange(1*Temp0,4*Temp1)
 
         """Eliminacion de enemy fuera de pantalla y Colisionessss"""
         for e in Enemys:
@@ -490,7 +506,7 @@ def Juego(ventana):
                         o.Dead()
                         j.impacto_jugador()
                         j.quitar_vida()
-                        print j.vida
+                        # print j.vida
 
                         """Sonido de golpe perro"""
                         """Actualizar INFO de jugador"""
@@ -556,13 +572,7 @@ def Juego(ventana):
         Obstaculos.draw(ventana)
         Modificadores.draw(ventana)
         Generadores.draw(ventana)
-
-        for v in range(j.vida + 1):
-            if j.inmunidad == False:
-                ventana.blit(MODIFI[0],[10+64*v,10])
-            elif j.inmunidad == True:
-                ventana.blit(MODIFI[2],[10+64*v,10])
-
+        j.info_jugador()
         pygame.display.flip()
         reloj.tick(FPS)
 
