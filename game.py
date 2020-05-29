@@ -81,7 +81,7 @@ class Enemy(pygame.sprite.Sprite):
             self.corregir_via()
 
     def Dead(self):
-        self.isLife = False
+        self.life = False
 
 
 
@@ -345,6 +345,7 @@ class Player(pygame.sprite.Sprite):
 
     def impacto_jugador(self):
         self.impacto = True
+        pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/choque.wav'))
         self.temp_impacto = 25
 
     def quitar_vida(self):
@@ -462,7 +463,7 @@ def Juego(ventana):
                     j.impacto_jugador()
                     j.quitar_vida()
 
-                    """Sonido de golpe perro"""
+
                     """Actualizar INFO de jugador"""
                     impacto = True
 
@@ -481,7 +482,7 @@ def Juego(ventana):
                         j.impacto_jugador()
                         j.quitar_vida()
 
-                        """Sonido de golpe perro"""
+                        choque.play()
                         """Actualizar INFO de jugador"""
                     else: # Arbusto
                         o.Dead()
@@ -497,19 +498,24 @@ def Juego(ventana):
             for j in Ls_Modi:
                 if m.tipo == 0: #tipo 0 es vida
                     j.vida += 1
+                    pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/vida.wav'))
                     print j.vida
                 if m.tipo == 1: #tipo 1 es x2
                     j.por_dos = True
+                    pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/pordos.wav'))
                     j.temp_por_dos = Tx2
                 if m.tipo == 2: #tipo 2 es inmunidadad
                     j.inmunidad = True
+                    pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/invencible.wav'))
                     j.temp_inmunidad = Tinmu
                 if m.tipo == 3: #tipo 3 es vivacidad
                     j.vivacidad = True
+                    pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/acelera.wav'))
                     j.temp_vivacidad = Tviva
                 if m.tipo == 4: #tipo 4 es lentitud
                     j.lentitud = True
                     j.temp_lentitud = Tlenti
+                    pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/lentitud.wav'))
 
                 Modificadores.remove(m)
 
@@ -517,6 +523,7 @@ def Juego(ventana):
             if j.vida < 0:
                 """Sonido perro de muerte"""
                 j.muerto = True
+                explosion.play()
                 j.velx = 0
                 j.rapidez = 0
                 fin_juego = True
@@ -594,6 +601,8 @@ if __name__ == '__main__':
     fuente = pygame.font.Font(None, 40)
     fondo  = pygame.image.load('images/fondo.png')
     musica = pygame.mixer.Sound('sonidos/menu.wav')
+    explosion = pygame.mixer.Sound('sonidos/efectos/explosion.mp3')
+    choque = pygame.mixer.Sound('sonidos/efectos/choque.mp3')
     fin = False
     previo = False
     click = False
