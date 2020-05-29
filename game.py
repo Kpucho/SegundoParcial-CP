@@ -240,7 +240,7 @@ class Player(pygame.sprite.Sprite):
 
             self.rapidez = valor_camino + valor_lentitud + valor_vivacidad
         else:
-            self.rapidez = 2
+            self.rapidez = 1
 
     def update_vel(self):
 
