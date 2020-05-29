@@ -547,11 +547,10 @@ def Juego(ventana):
 
 def FinJuego(ventana, Puntaje):
     pygame.font.init()
+    pygame.mixer.init(44100, -16, 2, 2048)
     musica = pygame.mixer.Sound('sonidos/final.wav')
-    #pygame.mixer.init(44100, -16, 2, 2048)
     fuente = pygame.font.Font(None, 40)
     fondo  = pygame.image.load('images/fin_juego.jpg')
-    #musica = pygame.mixer.Sound('sonidos/menu.wav')#Cambiar
     click = False
     musica.play(-1)
     fin = False
