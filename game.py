@@ -81,8 +81,8 @@ class Enemy(pygame.sprite.Sprite):
             self.corregir_via()
 
     def Dead(self):
-        self.life = False
-        self.image.fill(LIGHT_PINK)
+        self.isLife = False
+
 
 
     def update(self, fondo_velx):
@@ -503,15 +503,15 @@ if __name__ == '__main__':
                 Enemys.remove(e)
 
             for j in Ls_Enemys:
-                if e.islife == True:
-                    if not impacto:
-                        e.Dead()
-                        j.reducevel()
-                        print j.vida
-                        j.vida-=1
-                        """Sonido de golpe perro"""
-                        """Actualizar INFO de jugador"""
-                        impacto = True
+                if e.life == True and not impacto:
+                    e.Dead()
+                    j.impacto_jugador()
+                    j.quitar_vida()
+                    print j.vida
+
+                    """Sonido de golpe perro"""
+                    """Actualizar INFO de jugador"""
+                    impacto = True
 
         for o in Obstaculos:
             Ls_Obs = pygame.sprite.spritecollide(o,Jugadores,False)
