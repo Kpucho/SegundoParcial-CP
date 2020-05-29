@@ -354,7 +354,7 @@ class Player(pygame.sprite.Sprite):
 
     def quitar_vida(self):
         if not self.inmunidad:
-            # pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/choque.wav'))
+            pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/choque.wav'))
             self.vida -= 1
             self.inmunidad = True
             self.temp_inmunidad = 4 * FPS
@@ -547,23 +547,23 @@ def Juego(ventana):
             for j in Ls_Modi:
                 if m.tipo == 0: #tipo 0 es vida
                     j.vida += 1
-                    # pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/vida.wav'))
+                    pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/vida.wav'))
                     print j.vida
                 if m.tipo == 1: #tipo 1 es x2
                     j.por_dos = True
-                    # pygame.mixer.Channel(2).play(pygame.mixer.Sound('sonidos/efectos/pordos.wav'))
+                    pygame.mixer.Channel(2).play(pygame.mixer.Sound('sonidos/efectos/pordos.wav'))
                     j.temp_por_dos = Tx2
                 if m.tipo == 2: #tipo 2 es inmunidadad
                     j.inmunidad = True
-                    # pygame.mixer.Channel(3).play(pygame.mixer.Sound('sonidos/efectos/invencible.wav'))
+                    pygame.mixer.Channel(3).play(pygame.mixer.Sound('sonidos/efectos/invencible.wav'))
                     j.temp_inmunidad = Tinmu
                 if m.tipo == 3: #tipo 3 es vivacidad
                     j.vivacidad = True
-                    # pygame.mixer.Channel(4).play(pygame.mixer.Sound('sonidos/efectos/acelera.wav'))
+                    pygame.mixer.Channel(4).play(pygame.mixer.Sound('sonidos/efectos/acelera.wav'))
                     j.temp_vivacidad = Tviva
                 if m.tipo == 4: #tipo 4 es lentitud
                     j.lentitud = True
-                    # pygame.mixer.Channel(5).play(pygame.mixer.Sound('sonidos/efectos/lentitud.wav'))
+                    pygame.mixer.Channel(5).play(pygame.mixer.Sound('sonidos/efectos/lentitud.wav'))
                     j.temp_lentitud = Tlenti
 
 
@@ -628,7 +628,6 @@ def FinJuego(ventana, Puntaje):
         boton2 = pygame.Rect(450, 400, 250, 50)
         if boton1.collidepoint((mx, my)):
             if click:
-                print "volver a jugar"
                 volver = True
         if boton2.collidepoint((mx, my)):
             if click:
@@ -768,7 +767,7 @@ def InfoJuego(ventana):
 if __name__ == '__main__':
     ventana = pygame.display.set_mode([ANCHO,ALTO])
     pygame.display.set_caption('Satanic Cars Alv')
-
+    pygame.display.set_icon(pygame.image.load('images/calo.ico'))
     """                       MENU                                        """
 
     Menu(ventana)
