@@ -10,6 +10,7 @@ AMARILLO=[255,255,0]
 DORADO = [212, 175, 55]
 BLANCO=[255,255,255]
 AZUL=[0,0,255]
+LIGHT_ROJO = [255,55,55]
 LIGHT_PINK = [212, 159, 183]
 
 #Temporizadores de modificadores

@@ -385,10 +385,10 @@ if __name__ == '__main__':
 
         ventana.blit(fondo, [0,0])
         mx, my = pygame.mouse.get_pos()
-        draw_text('Satanic Cars Alv', fuente, BLANCO, ventana, [250, 50])
-        boton1 = pygame.Rect(250, 150, 220, 50)
+        draw_text('Satanic Cars Alv', fuente, BLANCO, ventana, [300, 50])
+        boton1 = pygame.Rect(300, 150, 220, 50)
 
-        boton2 = pygame.Rect(250, 250, 220, 50)
+        boton2 = pygame.Rect(300, 250, 220, 50)
         if boton1.collidepoint((mx, my)):
             if click:
                 previo = True
@@ -396,9 +396,9 @@ if __name__ == '__main__':
             if click:
                 fin = True
         pygame.draw.rect(ventana, LIGHT_PINK, boton1)
-        draw_text('Iniciar', fuente, BLANCO, ventana, [320, 160])
+        draw_text('Iniciar', fuente, BLANCO, ventana, [370, 160])
         pygame.draw.rect(ventana, LIGHT_PINK, boton2)
-        draw_text('Salir', fuente, BLANCO, ventana, [320, 260])
+        draw_text('Salir', fuente, BLANCO, ventana, [370, 260])
 
         click = False
 
@@ -507,7 +507,6 @@ if __name__ == '__main__':
                     e.Dead()
                     j.impacto_jugador()
                     j.quitar_vida()
-                    print j.vida
 
                     """Sonido de golpe perro"""
                     """Actualizar INFO de jugador"""
@@ -527,7 +526,6 @@ if __name__ == '__main__':
                         o.Dead()
                         j.impacto_jugador()
                         j.quitar_vida()
-                        print j.vida
 
                         """Sonido de golpe perro"""
                         """Actualizar INFO de jugador"""
@@ -567,6 +565,7 @@ if __name__ == '__main__':
                 j.muerto = True
                 j.velx = 0
                 j.rapidez = 0
+                fin_juego = True
 
         fondo_velx = - j.rapidez
         fondo_posx += fondo_velx
@@ -588,3 +587,42 @@ if __name__ == '__main__':
         Generadores.draw(ventana)
         pygame.display.flip()
         reloj.tick(FPS)
+
+                    #Fin del juego
+    musica.stop()
+    pygame.font.init()
+    #pygame.mixer.init(44100, -16, 2, 2048)
+    fuente = pygame.font.Font(None, 40)
+    fondo  = pygame.image.load('images/fin_juego.jpg')
+    #musica = pygame.mixer.Sound('sonidos/menu.wav')#Cambiar
+    click = False
+    #musica.play(-1)
+    while (not fin):
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                fin = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+
+        ventana.blit(fondo, [0,0])
+        mx, my = pygame.mouse.get_pos()
+        draw_text('Puntaje final: ' + str(j.puntaje), fuente, BLANCO, ventana, [300, 50])
+        draw_text('Satanic Cars Alv', fuente, ROJO, ventana, [300, 650])
+        boton1 = pygame.Rect(100, 400, 250, 50)
+
+        boton2 = pygame.Rect(450, 400, 250, 50)
+        if boton1.collidepoint((mx, my)):
+            if click:
+                print "volver a jugar"
+                #Configurar volver a jugar
+        if boton2.collidepoint((mx, my)):
+            if click:
+                fin = True
+        pygame.draw.rect(ventana, LIGHT_ROJO, boton1)
+        draw_text('Volver a jugar', fuente, BLANCO, ventana, [120, 410])
+        pygame.draw.rect(ventana, LIGHT_ROJO, boton2)
+        draw_text('Salir', fuente, BLANCO, ventana, [540, 410])
+
+        click = False
