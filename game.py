@@ -591,12 +591,13 @@ if __name__ == '__main__':
                     #Fin del juego
     musica.stop()
     pygame.font.init()
+    musica = pygame.mixer.Sound('sonidos/final.wav')
     #pygame.mixer.init(44100, -16, 2, 2048)
     fuente = pygame.font.Font(None, 40)
     fondo  = pygame.image.load('images/fin_juego.jpg')
     #musica = pygame.mixer.Sound('sonidos/menu.wav')#Cambiar
     click = False
-    #musica.play(-1)
+    musica.play(-1)
     while (not fin):
         pygame.display.flip()
         for event in pygame.event.get():
