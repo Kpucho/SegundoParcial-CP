@@ -359,11 +359,11 @@ if __name__ == '__main__':
     fondo_info = fondojuego.get_rect()
     fondo_posx = 0
     limFondo = ANCHO - fondo_info[2]
-
+    musica = pygame.mixer.Sound('sonidos/juego.wav')
 
     reloj = pygame.time.Clock()
     fin_juego = False
-
+    musica.play(-1)
     """Eventos"""
     while not fin and (not fin_juego):
         for event in pygame.event.get():
