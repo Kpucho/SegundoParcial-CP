@@ -367,6 +367,9 @@ class Player(pygame.sprite.Sprite):
                 ventana.blit(MODIFI[0],[10+64*v,10])
             elif self.inmunidad == True:
                 ventana.blit(MODIFI[2],[10+64*v,10])
+        fuente = pygame.font.Font(None, 40)
+        draw_text('Puntaje: ' + str(self.puntaje), fuente, BLANCO, ventana, [10, 80])
+
         if self.por_dos:
             ventana.blit(MODIFI[1],[10,630])
 
