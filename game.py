@@ -17,12 +17,17 @@ class Generador (pygame.sprite.Sprite):
             self.temp = random.randrange(Temp0,Temp1)
         elif Type == "Obstaculos":
             self.temp = random.randrange(2*Temp0,3*Temp1)
+        elif Type == "Modificadores":
+            self.temp = random.randrange(5*Temp0,10*Temp1)
 
     def update(self):
         self.temp-=1
 
     def getPosGenetation(self):
         return self.rect.y
+
+    def getposModifi(self):
+        return (Vias[random.randrange(1,3)] + (Vinicial))
 
 class Enemy(pygame.sprite.Sprite):
 
@@ -123,6 +128,33 @@ class Obstaculo(pygame.sprite.Sprite):
         self.velx = fondo_velx
         self.rect.x += self.velx
 
+class Modificador(pygame.sprite.Sprite):
+
+    def __init__(self, posy, type):
+        pygame.sprite.Sprite.__init__(self)
+        #tipo 0 es vida
+        #tipo 1 es x2
+        #tipo 2 es inmunidadad
+        #tipo 3 es vivacidad
+        #tipo 4 es lentitud
+        self.tipo = type
+        self.color = [VERDE, DORADO, BLANCO, ROJO, AZUL]
+
+        self.image = pygame.Surface([64,64])
+        self.image.fill(self.color[self.tipo])
+
+        # self.image = pygame.image.load('images/sprites/obstaculos.png')
+        # self.image = self.image.subsurface(0, 530, 80, 115)
+        self.rect = self.image.get_rect()
+        self.rect.x = ANCHO
+        self.rect.y = posy
+        self.velx = 0
+        self.vely = 0
+
+    def update(self, fondo_velx):
+        self.velx = fondo_velx
+        self.rect.x += self.velx
+
 class Player(pygame.sprite.Sprite):
 
     def __init__(self):
@@ -164,8 +196,6 @@ class Player(pygame.sprite.Sprite):
         self.temp_por_dos = 0
 
         self.puntaje = 0
-
-
 
     def update_puntaje (self):
         if self.inmunidad:
@@ -356,6 +386,7 @@ if __name__ == '__main__':
     Generadores = pygame.sprite.Group()
     Enemys = pygame.sprite.Group()
     Obstaculos = pygame.sprite.Group()
+    Modificadores = pygame.sprite.Group()
 
     j = Player()
     Jugadores.add(j)
@@ -365,12 +396,15 @@ if __name__ == '__main__':
         Aux = Vinicial+i*TamVias
         Vias.append(Aux)
         if i < 5:
-            if i in [1,2,3]:
+            if i in carretera:
                 Type = "Enemys"
             else:
                 Type = "Obstaculos"
             G = Generador(Aux, Type)
             Generadores.add(G)
+
+    G = Generador(0,"Modificadores")
+    Generadores.add(G)
 
     #Carga del mapa
     fondojuego = pygame.image.load('carmap.png')
@@ -408,8 +442,6 @@ if __name__ == '__main__':
                     j.vely = 0
                     # j.dir = 1
 
-
-
         #CONTROL
         """Activacion generadores"""
         for g in Generadores:
@@ -428,6 +460,13 @@ if __name__ == '__main__':
                     o.velx = fondo_velx
                     Obstaculos.add(o)
                     g.temp = random.randrange(2*Temp0,3*Temp1)
+                if g.Type == "Modificadores":
+                    i = prob5(80)
+                    if (i != -1):
+                        m = Modificador(g.getposModifi(),prob5(80))
+                        m.velx = fondo_velx
+                        Modificadores.add(m)
+                        g.temp = random.randrange(5*Temp0,10*Temp1)
 
         """Eliminacion de enemy fuera de pantalla y Colisionessss"""
         for e in Enemys:
@@ -443,6 +482,7 @@ if __name__ == '__main__':
                     e.Dead()
                     j.impacto_jugador()
                     j.quitar_vida()
+                    print j.vida
 
                     """Sonido de golpe perro"""
                     """Actualizar INFO de jugador"""
@@ -463,6 +503,7 @@ if __name__ == '__main__':
                         o.Dead()
                         j.impacto_jugador()
                         j.quitar_vida()
+                        print j.vida
 
                         """Sonido de golpe perro"""
                         """Actualizar INFO de jugador"""
@@ -471,9 +512,35 @@ if __name__ == '__main__':
                         j.impacto_jugador()
                     impacto = True
 
+        for m in Modificadores:
+            Ls_Modi = pygame.sprite.spritecollide(m,Jugadores,False)
+
+            if m.rect.right < 0:
+                Modificadores.remove(m)
+
+            for j in Ls_Modi:
+                if m.tipo == 0: #tipo 0 es vida
+                    j.vida += 1
+                    print j.vida
+                if m.tipo == 1: #tipo 1 es x2
+                    j.por_dos = True
+                    j.temp_por_dos = Tx2
+                if m.tipo == 2: #tipo 2 es inmunidadad
+                    j.inmunidad = True
+                    j.temp_inmunidad = Tinmu
+                if m.tipo == 3: #tipo 3 es vivacidad
+                    j.vivacidad = True
+                    j.temp_vivacidad = Tviva
+                if m.tipo == 4: #tipo 4 es lentitud
+                    j.lentitud = True
+                    j.temp_lentitud = Tlenti
+
+                Modificadores.remove(m)
+
         for j in Jugadores:
             if j.vida < 0:
                 """Sonido perro de muerte"""
+                print "moriste we"
                 fin_juego = True
 
         fondo_velx = - j.rapidez
@@ -482,6 +549,7 @@ if __name__ == '__main__':
         Jugadores.update()
         Enemys.update(fondo_velx)
         Obstaculos.update(fondo_velx)
+        Modificadores.update(fondo_velx)
         Generadores.update()
 
         #Dibujado
@@ -491,6 +559,7 @@ if __name__ == '__main__':
         Jugadores.draw(ventana)
         Enemys.draw(ventana)
         Obstaculos.draw(ventana)
+        Modificadores.draw(ventana)
         Generadores.draw(ventana)
         pygame.display.flip()
         reloj.tick(FPS)
