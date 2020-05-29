@@ -367,6 +367,8 @@ def Juego(ventana):
     Obstaculos = pygame.sprite.Group()
     Modificadores = pygame.sprite.Group()
 
+
+
     j = Player()
     Jugadores.add(j)
 
@@ -513,6 +515,8 @@ def Juego(ventana):
 
                 Modificadores.remove(m)
 
+        while v in range(j.vida):
+            
         for j in Jugadores:
             if j.vida < 0:
                 """Sonido perro de muerte"""

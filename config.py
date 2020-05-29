@@ -65,9 +65,6 @@ OBSTACULOS = []
 IMAGEN_OBSTACULOS = pygame.image.load('images/sprites/obstaculos.png')
 OBSTACULOS.append(IMAGEN_OBSTACULOS.subsurface(0, 530, 80, 125))
 
-
-
-
 #pExito = probabilidad de conseguir cierto objetivo
 def prob2(pExito):
     prob = random.randrange(101)
