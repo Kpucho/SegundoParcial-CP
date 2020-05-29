@@ -19,8 +19,8 @@ Tviva = 25
 Tlenti = 20
 
 #Control
-Temp0 = 10
-Temp1 = 50
+Temp0 = 40
+Temp1 = 80
 TamVias = 128
 Vinicial = 32
 carretera = [1,2,3]

@@ -45,7 +45,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
-        self.rapidez = 3
+        self.rapidez = 1
         self.velx = 0
         self.vely = 0
         self.estado = 0 # animacion 0 izq  1: abajo 2: arriba
@@ -140,7 +140,7 @@ class Modificador(pygame.sprite.Sprite):
         self.tipo = type
         self.color = [VERDE, DORADO, BLANCO, ROJO, AZUL]
 
-        self.image = pygame.Surface([64,64])
+        self.image = pygame.Surface([32,32])
         self.image.fill(self.color[self.tipo])
 
         # self.image = pygame.image.load('images/sprites/obstaculos.png')
@@ -152,7 +152,7 @@ class Modificador(pygame.sprite.Sprite):
         self.vely = 0
 
     def update(self, fondo_velx):
-        self.velx = fondo_velx
+        self.velx = - 2
         self.rect.x += self.velx
 
 class Player(pygame.sprite.Sprite):
@@ -168,7 +168,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = ALTO/2
         self.velx = 0
         self.vely = 0
-        self.rapidez = 7
+        self.rapidez = 5
         self.vida = 3
         # self.dir = 1
         # self.bloques = None
@@ -235,7 +235,7 @@ class Player(pygame.sprite.Sprite):
             elif self.rect.top <= Vias[5] and self.rect.bottom >= Vias[4]:
                 valor_camino = 3
             elif self.rect.top > Vias[0] and self.rect.bottom < Vias[5]:
-                valor_camino = 7
+                valor_camino = 5
 
             j.rapidez = valor_camino + valor_lentitud + valor_vivacidad
         else:
@@ -466,7 +466,7 @@ if __name__ == '__main__':
                         m = Modificador(g.getposModifi(),prob5(80))
                         m.velx = fondo_velx
                         Modificadores.add(m)
-                        g.temp = random.randrange(5*Temp0,10*Temp1)
+                        g.temp = random.randrange(3*Temp0,6*Temp1)
 
         """Eliminacion de enemy fuera de pantalla y Colisionessss"""
         for e in Enemys:
