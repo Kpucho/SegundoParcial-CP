@@ -37,20 +37,41 @@ DIR2 = []
 DIR3 = []
 MUERTE = []
 
+INMU = []
+INMU1 = []
+INMU2 = []
 
-IMAGEN_JUGADOR =  pygame.image.load('images/sprites/cars3.png')
+IMAGEN_JUGADOR_HORIZONTAL =  pygame.image.load('images/sprites/car0.png')
+IMAGEN_JUGADOR_ABAJO =  pygame.image.load('images/sprites/car2.png')
+IMAGEN_JUGADOR_ARRIBA =  pygame.image.load('images/sprites/car1.png')
+
+INMUCAR_HORIZONTAL = pygame.image.load('images/sprites/inmucar0.png')
+INMUCAR_VERTICAL = pygame.image.load('images/sprites/inmucar1.png')
+INMUCAR_ABAJO = pygame.image.load('images/sprites/inmucar2.png')
+
 
 """movimiento jugador"""
-DIR.append(IMAGEN_JUGADOR.subsurface(0, 0, 55, 40))
-DIR.append(IMAGEN_JUGADOR.subsurface(0, 40, 55, 40))
-DIR2.append(IMAGEN_JUGADOR.subsurface(105, 0, 55, 40))
-DIR2.append(IMAGEN_JUGADOR.subsurface(105, 40, 55, 40))
-DIR3.append(IMAGEN_JUGADOR.subsurface(55, 0, 50, 40))
-DIR3.append(IMAGEN_JUGADOR.subsurface(55, 40, 50, 40))
 
-"""Jugador muere"""
-MUERTE.append(IMAGEN_JUGADOR.subsurface(0, 80, 50, 40))
-MUERTE.append(IMAGEN_JUGADOR.subsurface(50, 80, 50, 40))
+"""horizontal"""
+for c in range(4):
+    DIR.append(IMAGEN_JUGADOR_HORIZONTAL.subsurface(60*c, 0, 60, 40))
+
+for c in range(4):
+    DIR2.append(IMAGEN_JUGADOR_ABAJO.subsurface(60*c, 0, 60, 47))
+
+for c in range(4):
+    DIR3.append(IMAGEN_JUGADOR_ARRIBA.subsurface(60*c, 0, 60, 47))
+
+
+"""inmune """
+for c in range(4):
+    INMU.append(INMUCAR_HORIZONTAL.subsurface(60*c, 0, 60, 40))
+
+for c in range(4):
+    INMU1.append(INMUCAR_VERTICAL.subsurface(60*c, 0, 60, 47))
+
+for c in range(4):
+    INMU2.append(INMUCAR_ABAJO.subsurface(60*c, 0, 60, 47))
 
 """Enemigos"""
 ENEMIGOS = []
@@ -64,6 +85,7 @@ ENEMIGOS.append(IMAGEN_ENEMIGOS.subsurface(0, 162, 136, 50))
 OBSTACULOS = []
 IMAGEN_OBSTACULOS = pygame.image.load('images/sprites/obstaculos.png')
 OBSTACULOS.append(IMAGEN_OBSTACULOS.subsurface(0, 530, 80, 125))
+OBSTACULOS.append(IMAGEN_OBSTACULOS.subsurface(131, 287, 50, 62))
 
 """Modificadores"""
 im_modificadores = pygame.image.load('images/sprites/modificadores.png')

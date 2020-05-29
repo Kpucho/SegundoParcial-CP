@@ -96,27 +96,31 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Obstaculo(pygame.sprite.Sprite):
-    def __init__(self, posy, Mamada):
-        pygame.sprite.Sprite.__init__(self)
-        self.life = True
-        self.isMamado = Mamada
-        self.image = pygame.Surface([50,50])
-        if (self.isMamado == True):
-            if self.life == True:
-                self.image.fill(ROJO)
-        else:
-            if self.life  == True:
-                self.image.fill(BLANCO)
 
+    def __init__(self, posy, tipo):
+        pygame.sprite.Sprite.__init__(self)
+
+        self.life = True
+        #tipo 0 es arbol
+        #tipo 1 es arbusto
+        self.tipo = tipo
+        self.color = [BLANCO, VERDE]
+        sprite = random.randrange(0, 2)
+        self.image = OBSTACULOS[sprite]
+
+
+        # self.image = pygame.image.load('images/sprites/obstaculos.png')
+        # self.image = self.image.subsurface(0, 530, 80, 115)
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
         self.rect.y = posy
         self.velx = 0
         self.vely = 0
 
+
     def Dead(self):
         self.life = False
-        if self.isMamado == 0: #Arbol
+        if self.tipo == 0: #Arbol
             self.image.fill(LIGHT_PINK)
         else: #arbusto
             self.image.fill(NEGRO)
@@ -193,7 +197,7 @@ class Player(pygame.sprite.Sprite):
         # multiplicador de puntaje
         self.por_dos = False
         self.temp_por_dos = 0
-        self.conta_animacion = 1
+        self.conta_animacion = 3
         self.muerto = False
 
         self.puntaje = 0
@@ -270,22 +274,29 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += self.velx
         self.rect.y+=self.vely
 
-        """Direcciones: 1 horizontal, 2 hacia abajo, 3 hacia arriba """
-        if self.dir == 1:
-            self.image = DIR[self.animacion]
-        elif self.dir == 2:
-            self.image = DIR2[self.animacion]
-        elif self.dir == 3:
-            self.image = DIR3[self.animacion]
+        if not self.inmunidad:
+            """Direcciones: 1 horizontal, 2 hacia abajo, 3 hacia arriba """
+            if self.dir == 1:
+                self.image = DIR[self.animacion]
+            elif self.dir == 2:
+                self.image = DIR2[self.animacion]
+            elif self.dir == 3:
+                self.image = DIR3[self.animacion]
+
+        else:
+            """Direcciones: 1 horizontal, 2 hacia abajo, 3 hacia arriba """
+            if self.dir == 1:
+                self.image = INMU[self.animacion]
+            elif self.dir == 2:
+                self.image = INMU2[self.animacion]
+            elif self.dir == 3:
+                self.image = INMU1[self.animacion]
+
 
         if self.animacion < self.conta_animacion:
             self.animacion += 1
         else:
             self.animacion = 0
-
-        if self.muerto:
-            self.image = MUERTE[self.animacion]
-
         #Limites de la pantalla
         if self.rect.left <= 0:
             self.velx = 0
@@ -479,12 +490,13 @@ def Juego(ventana):
             for j in Ls_Obs:
                 if o.life == True and not impacto:
                     #Arbol
-                    if o.isMamado == 0:
+                    if o.tipo == 0:
                         o.Dead()
                         j.impacto_jugador()
                         j.quitar_vida()
+                        print j.vida
 
-                        choque.play()
+                        """Sonido de golpe perro"""
                         """Actualizar INFO de jugador"""
                     else: # Arbusto
                         o.Dead()
@@ -516,8 +528,9 @@ def Juego(ventana):
                     j.temp_vivacidad = Tviva
                 if m.tipo == 4: #tipo 4 es lentitud
                     j.lentitud = True
-                    j.temp_lentitud = Tlenti
                     pygame.mixer.Channel(5).play(pygame.mixer.Sound('sonidos/efectos/lentitud.wav'))
+                    j.temp_lentitud = Tlenti
+
 
                 Modificadores.remove(m)
 
