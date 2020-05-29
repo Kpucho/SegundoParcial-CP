@@ -120,10 +120,6 @@ class Obstaculo(pygame.sprite.Sprite):
 
     def Dead(self):
         self.life = False
-        if self.tipo == 0: #Arbol
-            self.image.fill(LIGHT_PINK)
-        else: #arbusto
-            self.image.fill(NEGRO)
 
     def update(self, fondo_velx):
         self.velx = fondo_velx
@@ -539,7 +535,6 @@ def Juego(ventana):
             if j.vida < 0:
                 """Sonido perro de muerte"""
                 j.muerto = True
-                explosion.play()
                 j.velx = 0
                 j.rapidez = 0
                 fin_juego = True
