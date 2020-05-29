@@ -32,6 +32,7 @@ class Generador (pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, posy, tipo):
         self.islife = True
+
         sprite = random.randrange(0, 4)
         pygame.sprite.Sprite.__init__(self)
         self.image = ENEMIGOS[sprite]
@@ -46,6 +47,7 @@ class Enemy(pygame.sprite.Sprite):
         self.via = posy
         self.tipo = tipo
         self.temp_giro = random.randrange(Temp0,Temp1) #asegurar que sea cada segundo
+
 
     def corregir_via(self):
         #No salirse de su carril
