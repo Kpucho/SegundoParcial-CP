@@ -81,7 +81,7 @@ class Enemy(pygame.sprite.Sprite):
             self.corregir_via()
 
     def Dead(self):
-        self.isLife = False
+        self.life = False
 
 
 
