@@ -649,9 +649,10 @@ def Menu(ventana):
     musica = pygame.mixer.Sound('sonidos/menu.wav')
     fin = False
     previo = False
+    info_juego = False
     click = False
     musica.play(-1)
-    while (not fin) and (not previo):
+    while (not fin) and (not previo) and (not info_juego):
 
         pygame.display.flip()
         for event in pygame.event.get():
@@ -665,23 +666,87 @@ def Menu(ventana):
         mx, my = pygame.mouse.get_pos()
         draw_text('Satanic Cars Alv', fuente, BLANCO, ventana, [300, 50])
         boton1 = pygame.Rect(300, 150, 220, 50)
-
         boton2 = pygame.Rect(300, 250, 220, 50)
+        boton3 = pygame.Rect(300, 350, 220, 50)
+
         if boton1.collidepoint((mx, my)):
             if click:
                 previo = True
         if boton2.collidepoint((mx, my)):
             if click:
+                info_juego = True
+        if boton3.collidepoint((mx, my)):
+            if click:
                 fin = True
         pygame.draw.rect(ventana, LIGHT_PINK, boton1)
         draw_text('Iniciar', fuente, BLANCO, ventana, [370, 160])
         pygame.draw.rect(ventana, LIGHT_PINK, boton2)
-        draw_text('Salir', fuente, BLANCO, ventana, [370, 260])
+        draw_text('Como jugar', fuente, BLANCO, ventana, [350, 260])
+        pygame.draw.rect(ventana, LIGHT_PINK, boton3)
+        draw_text('Salir', fuente, BLANCO, ventana, [370, 360])
 
         click = False
 
     musica.stop()
-    Juego(ventana)
+    if (previo):
+        Juego(ventana)
+    if (info_juego):
+        InfoJuego(ventana)
+
+def InfoJuego(ventana):
+    pygame.font.init()
+    pygame.mixer.init(44100, -16, 2, 2048)
+    fuente = pygame.font.Font(None, 40)
+    fondo  = pygame.image.load('images/infoJuego.jpg')
+    musica = pygame.mixer.Sound('sonidos/xd.wav')
+    fin = False
+    iniciar = False
+    click = False
+    musica.play(-1)
+    while (not fin) and (not iniciar):
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                fin = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+
+        ventana.blit(fondo, [0,0])
+        draw_text('Muevete usando:', fuente, BLANCO, ventana, [100,120])
+        ventana.blit(pygame.image.load('images/como_jugar/teclas_wasd.png'), [360, 100])
+        draw_text('o',fuente, BLANCO, ventana, [470, 120])
+        ventana.blit(pygame.image.load('images/como_jugar/teclas_flechas.png'), [500, 90])
+
+        draw_text('Esquiva tus enemigos:', fuente, BLANCO, ventana, [50,220])
+        ventana.blit(ENEMIGOS[0], [370, 200])
+        ventana.blit(ENEMIGOS[1], [460, 200])
+        ventana.blit(ENEMIGOS[2], [550, 200])
+        ventana.blit(ENEMIGOS[3], [640, 200])
+
+        mx, my = pygame.mouse.get_pos()
+        draw_text('Como jugar', fuente, BLANCO, ventana, [300, 50])
+        draw_text('Satanic Cars Alv', fuente, BLANCO, ventana, [300, 650])
+        boton1 = pygame.Rect(100, 500, 250, 50)
+
+        boton2 = pygame.Rect(450, 500, 250, 50)
+        if boton1.collidepoint((mx, my)):
+            if click:
+                iniciar = True
+        if boton2.collidepoint((mx, my)):
+            if click:
+                fin = True
+
+        pygame.draw.rect(ventana, LIGHT_ROJO, boton1)
+        draw_text('Jugar', fuente, BLANCO, ventana, [120, 510])
+        pygame.draw.rect(ventana, LIGHT_ROJO, boton2)
+        draw_text('Salir', fuente, BLANCO, ventana, [540, 510])
+
+        click = False
+
+    musica.stop()
+    if (iniciar):
+        Juego(ventana)
 
 if __name__ == '__main__':
     ventana = pygame.display.set_mode([ANCHO,ALTO])
