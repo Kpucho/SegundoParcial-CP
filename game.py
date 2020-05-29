@@ -356,7 +356,7 @@ class Player(pygame.sprite.Sprite):
 
     def quitar_vida(self):
         if not self.inmunidad:
-            pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/choque.wav'))
+            # pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/choque.wav'))
             self.vida -= 1
             self.inmunidad = True
             self.temp_inmunidad = 4 * FPS
@@ -376,30 +376,34 @@ class Player(pygame.sprite.Sprite):
         if self.lentitud:
             ventana.blit(MODIFI[4],[138,630])
 
+
 def dibujar_fondo(fondojuego, lista_fondox, fondo_velx):
     creacion = False
     fondo_info = fondojuego.get_rect()
     limFondo = ANCHO - fondo_info[2]
     tam = len(lista_fondox)
-    print tam
+    # print limFondo
     lista_fondox_aux = []
+
     for posx in lista_fondox:
 
-        if posx <= - fondo_info[2]:
+        if posx <= - fondo_info[2] and tam == 2:
+            print 'CAMBIO'
             break;
 
         elif posx <= limFondo and tam == 1:
             #Crea otro fondo
             creacion = True
             lista_fondox_aux.append(limFondo)
-        else:
+
+        elif posx  >  limFondo:
             # print 'd', posx, 'x', fondo_velx
             aux = posx + fondo_velx
             lista_fondox_aux.append(aux)
             ventana.blit(fondojuego, [aux,0])
 
     if creacion:
-        lista_fondox_aux.append(800)
+        lista_fondox_aux.append(0)
         creacion = False
     return lista_fondox_aux
 
@@ -544,23 +548,23 @@ def Juego(ventana):
             for j in Ls_Modi:
                 if m.tipo == 0: #tipo 0 es vida
                     j.vida += 1
-                    pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/vida.wav'))
+                    # pygame.mixer.Channel(1).play(pygame.mixer.Sound('sonidos/efectos/vida.wav'))
                     print j.vida
                 if m.tipo == 1: #tipo 1 es x2
                     j.por_dos = True
-                    pygame.mixer.Channel(2).play(pygame.mixer.Sound('sonidos/efectos/pordos.wav'))
+                    # pygame.mixer.Channel(2).play(pygame.mixer.Sound('sonidos/efectos/pordos.wav'))
                     j.temp_por_dos = Tx2
                 if m.tipo == 2: #tipo 2 es inmunidadad
                     j.inmunidad = True
-                    pygame.mixer.Channel(3).play(pygame.mixer.Sound('sonidos/efectos/invencible.wav'))
+                    # pygame.mixer.Channel(3).play(pygame.mixer.Sound('sonidos/efectos/invencible.wav'))
                     j.temp_inmunidad = Tinmu
                 if m.tipo == 3: #tipo 3 es vivacidad
                     j.vivacidad = True
-                    pygame.mixer.Channel(4).play(pygame.mixer.Sound('sonidos/efectos/acelera.wav'))
+                    # pygame.mixer.Channel(4).play(pygame.mixer.Sound('sonidos/efectos/acelera.wav'))
                     j.temp_vivacidad = Tviva
                 if m.tipo == 4: #tipo 4 es lentitud
                     j.lentitud = True
-                    pygame.mixer.Channel(5).play(pygame.mixer.Sound('sonidos/efectos/lentitud.wav'))
+                    # pygame.mixer.Channel(5).play(pygame.mixer.Sound('sonidos/efectos/lentitud.wav'))
                     j.temp_lentitud = Tlenti
 
 
