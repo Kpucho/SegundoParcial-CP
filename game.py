@@ -14,11 +14,11 @@ class Generador (pygame.sprite.Sprite):
         self.rect.x = ANCHO
         self.rect.y = posy
         self.Type = T
-        if Type == "Enemys":
+        if self.Type == "Enemys":
             self.temp = random.randrange(Temp0,Temp1)
-        elif Type == "Obstaculos":
+        elif self.Type == "Obstaculos":
             self.temp = random.randrange(2*Temp0,3*Temp1)
-        elif Type == "Modificadores":
+        elif self.Type == "Modificadores":
             self.temp = random.randrange(5*Temp0,10*Temp1)
 
     def update(self):
@@ -238,9 +238,9 @@ class Player(pygame.sprite.Sprite):
             elif self.rect.top > Vias[0] and self.rect.bottom < Vias[5]:
                 valor_camino = 5
 
-            j.rapidez = valor_camino + valor_lentitud + valor_vivacidad
+            self.rapidez = valor_camino + valor_lentitud + valor_vivacidad
         else:
-            j.rapidez = 2
+            self.rapidez = 2
 
     def update_vel(self):
 
@@ -251,15 +251,15 @@ class Player(pygame.sprite.Sprite):
 
     def update_vel(self):
         if not self.impacto:
-            if j.vely > 0:
-                j.vely = j.rapidez
-            elif j.vely < 0:
-                j.vely = - j.rapidez
+            if self.vely > 0:
+                self.vely = self.rapidez
+            elif self.vely < 0:
+                self.vely = - self.rapidez
 
-            if j.velx > 0:
-                j.velx = j.rapidez
-            elif j.velx < 0:
-                j.velx = - j.rapidez
+            if self.velx > 0:
+                self.velx = self.rapidez
+            elif self.velx < 0:
+                self.velx = - self.rapidez
         else:
             if self.temp == 0:
                 self.impacto = False
@@ -359,54 +359,8 @@ def draw_text(msj, font, color, surface, cord):
     object = font.render(msj, True, color)
     surface.blit(object, cord)
 
-if __name__ == '__main__':
-
-    ventana = pygame.display.set_mode([ANCHO,ALTO])
-
-    """                       MENU                                        """
-    pygame.font.init()
+def Juego(ventana):
     pygame.mixer.init(44100, -16, 2, 2048)
-    fuente = pygame.font.Font(None, 40)
-    fondo  = pygame.image.load('images/fondo.png')
-    musica = pygame.mixer.Sound('sonidos/menu.wav')
-    fin = False
-    previo = False
-    click = False
-    musica.play(-1)
-    while (not fin) and (not previo):
-
-        pygame.display.flip()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                fin = True
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    click = True
-
-        ventana.blit(fondo, [0,0])
-        mx, my = pygame.mouse.get_pos()
-        draw_text('Satanic Cars Alv', fuente, BLANCO, ventana, [300, 50])
-        boton1 = pygame.Rect(300, 150, 220, 50)
-
-        boton2 = pygame.Rect(300, 250, 220, 50)
-        if boton1.collidepoint((mx, my)):
-            if click:
-                previo = True
-        if boton2.collidepoint((mx, my)):
-            if click:
-                fin = True
-        pygame.draw.rect(ventana, LIGHT_PINK, boton1)
-        draw_text('Iniciar', fuente, BLANCO, ventana, [370, 160])
-        pygame.draw.rect(ventana, LIGHT_PINK, boton2)
-        draw_text('Salir', fuente, BLANCO, ventana, [370, 260])
-
-        click = False
-
-
-    """//////////////                      JUEGO                            ///////////"""
-    musica.stop()
-
-
     Jugadores = pygame.sprite.Group()
     Generadores = pygame.sprite.Group()
     Enemys = pygame.sprite.Group()
@@ -422,10 +376,9 @@ if __name__ == '__main__':
         Vias.append(Aux)
         if i < 5:
             if i in carretera:
-                Type = "Enemys"
+                G = Generador(Aux, "Enemys")
             else:
-                Type = "Obstaculos"
-            G = Generador(Aux, Type)
+                G = Generador(Aux, "Obstaculos")
             Generadores.add(G)
 
     G = Generador(0,"Modificadores")
@@ -440,6 +393,7 @@ if __name__ == '__main__':
 
     reloj = pygame.time.Clock()
     fin_juego = False
+    fin = False
     musica.play(-1)
     """Eventos"""
     while not fin and (not fin_juego):
@@ -588,8 +542,10 @@ if __name__ == '__main__':
         pygame.display.flip()
         reloj.tick(FPS)
 
-                    #Fin del juego
     musica.stop()
+    FinJuego(ventana, j.puntaje)
+
+def FinJuego(ventana, Puntaje):
     pygame.font.init()
     #pygame.mixer.init(44100, -16, 2, 2048)
     fuente = pygame.font.Font(None, 40)
@@ -597,6 +553,7 @@ if __name__ == '__main__':
     #musica = pygame.mixer.Sound('sonidos/menu.wav')#Cambiar
     click = False
     #musica.play(-1)
+    fin = False
     while (not fin):
         pygame.display.flip()
         for event in pygame.event.get():
@@ -608,7 +565,7 @@ if __name__ == '__main__':
 
         ventana.blit(fondo, [0,0])
         mx, my = pygame.mouse.get_pos()
-        draw_text('Puntaje final: ' + str(j.puntaje), fuente, BLANCO, ventana, [300, 50])
+        draw_text('Puntaje final: ' + str(Puntaje), fuente, BLANCO, ventana, [300, 50])
         draw_text('Satanic Cars Alv', fuente, ROJO, ventana, [300, 650])
         boton1 = pygame.Rect(100, 400, 250, 50)
 
@@ -616,7 +573,7 @@ if __name__ == '__main__':
         if boton1.collidepoint((mx, my)):
             if click:
                 print "volver a jugar"
-                #Configurar volver a jugar
+                Juego(ventana)
         if boton2.collidepoint((mx, my)):
             if click:
                 fin = True
@@ -626,3 +583,49 @@ if __name__ == '__main__':
         draw_text('Salir', fuente, BLANCO, ventana, [540, 410])
 
         click = False
+
+if __name__ == '__main__':
+
+    ventana = pygame.display.set_mode([ANCHO,ALTO])
+
+    """                       MENU                                        """
+    pygame.font.init()
+    pygame.mixer.init(44100, -16, 2, 2048)
+    fuente = pygame.font.Font(None, 40)
+    fondo  = pygame.image.load('images/fondo.png')
+    musica = pygame.mixer.Sound('sonidos/menu.wav')
+    fin = False
+    previo = False
+    click = False
+    musica.play(-1)
+    while (not fin) and (not previo):
+
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                fin = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+
+        ventana.blit(fondo, [0,0])
+        mx, my = pygame.mouse.get_pos()
+        draw_text('Satanic Cars Alv', fuente, BLANCO, ventana, [300, 50])
+        boton1 = pygame.Rect(300, 150, 220, 50)
+
+        boton2 = pygame.Rect(300, 250, 220, 50)
+        if boton1.collidepoint((mx, my)):
+            if click:
+                previo = True
+        if boton2.collidepoint((mx, my)):
+            if click:
+                fin = True
+        pygame.draw.rect(ventana, LIGHT_PINK, boton1)
+        draw_text('Iniciar', fuente, BLANCO, ventana, [370, 160])
+        pygame.draw.rect(ventana, LIGHT_PINK, boton2)
+        draw_text('Salir', fuente, BLANCO, ventana, [370, 260])
+
+        click = False
+
+    musica.stop()
+    Juego(ventana)

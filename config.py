@@ -27,6 +27,7 @@ Vinicial = 32
 carretera = [1,2,3]
 Vias = []
 FPS = 40
+Puntaje = 0
 
 import random
 import pygame
