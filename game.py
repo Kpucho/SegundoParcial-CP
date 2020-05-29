@@ -628,8 +628,6 @@ if __name__ == '__main__':
     fuente = pygame.font.Font(None, 40)
     fondo  = pygame.image.load('images/fondo.png')
     musica = pygame.mixer.Sound('sonidos/menu.wav')
-    explosion = pygame.mixer.Sound('sonidos/efectos/explosion.mp3')
-    choque = pygame.mixer.Sound('sonidos/efectos/choque.mp3')
     fin = False
     previo = False
     click = False
