@@ -503,8 +503,6 @@ def Juego(ventana):
                         o.Dead()
                         j.impacto_jugador()
                         j.quitar_vida()
-                        # print j.vida
-                        """Sonido de golpe perro"""
                     else: # Arbusto
                         o.Dead()
                         j.impacto_jugador()
@@ -544,7 +542,6 @@ def Juego(ventana):
 
         for j in Jugadores:
             if j.vida < 0:
-                """Sonido perro de muerte"""
                 j.muerto = True
                 j.velx = 0
                 j.rapidez = 0
@@ -618,11 +615,7 @@ def FinJuego(ventana, Puntaje):
         musica.stop()
         Juego(ventana)
 
-if __name__ == '__main__':
-
-    ventana = pygame.display.set_mode([ANCHO,ALTO])
-
-    """                       MENU                                        """
+def Menu(ventana):
     pygame.font.init()
     pygame.mixer.init(44100, -16, 2, 2048)
     fuente = pygame.font.Font(None, 40)
@@ -663,3 +656,11 @@ if __name__ == '__main__':
 
     musica.stop()
     Juego(ventana)
+
+if __name__ == '__main__':
+    ventana = pygame.display.set_mode([ANCHO,ALTO])
+    pygame.display.set_caption('Satanic Cars Alv')
+
+    """                       MENU                                        """
+
+    Menu(ventana)
